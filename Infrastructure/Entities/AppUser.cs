@@ -26,5 +26,7 @@ namespace Infrastructure.Entities
         public string ProviderName { get; set; }
         public string ProviderFingerprint { get; set; }
         public DateTime CreatedTime { get; set; }
+        public string UserId { get; set; }
+        public string BrowserMeta { get; set; }
     }
 }

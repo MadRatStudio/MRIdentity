@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
@@ -7,6 +7,12 @@
     <Authors>oleg.timofeev20@gmail.com</Authors>
     <Product>Lucky Punchers Api</Product>
     <Company>Mad Rat Studio</Company>
+    <Configurations>Debug;Release;Stage</Configurations>
+    <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Stage|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE;STAGE;NETCOREAPP2_0</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

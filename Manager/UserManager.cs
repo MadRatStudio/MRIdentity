@@ -24,6 +24,22 @@ namespace Manager
         {
         }
 
+        #region admin
+
+        public async Task<ApiResponse> AdminGetCollection(int skip, int limit, string q)
+        {
+
+        }
+
+        #endregion
+
+        #region login
+
+        /// <summary>
+        /// Generate user token by email
+        /// </summary>
+        /// <param name="model">Sign in model</param>
+        /// <returns>User token model</returns>
         public async Task<ApiResponse<UserLoginResponseModel>> TokenEmail(UserLoginModel model)
         {
             if (model == null) return Fail(0, null);
@@ -63,6 +79,14 @@ namespace Manager
             return Ok(response);
         }
 
+        #endregion
+
+
+        /// <summary>
+        /// Add claims to user
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         protected async Task<Tuple<AppUser, List<string>, ClaimsIdentity>> GetIdentity(UserLoginModel model)
         {
             var user = await _appUserManager.FindByEmailAsync(model.Email);

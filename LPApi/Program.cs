@@ -24,7 +24,7 @@ namespace IdentityApi
                 {
                     Database.Seed(services).Wait();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Console.Write(ex.ToString());
                     Console.ReadLine();
@@ -36,6 +36,9 @@ namespace IdentityApi
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .UseKestrel()
+                .UseIISIntegration()
+                .UseContentRoot(Directory.GetCurrentDirectory())
                 .ConfigureAppConfiguration((context, config) =>
                 {
                     config.SetBasePath(Directory.GetCurrentDirectory());

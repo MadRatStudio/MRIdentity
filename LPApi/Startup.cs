@@ -81,7 +81,7 @@ namespace IdentityApi
             });
 
             services.AddAutoMapper();
-            services.AddCors();
+            services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials()));
             services.AddMvc().AddJsonOptions(options =>
             {
                 options.SerializerSettings.DateFormatString = "yyyy-MM-ddTH:mm:ss.fffZ";
@@ -104,10 +104,7 @@ namespace IdentityApi
             app.UseDefaultFiles();
             app.UseAuthentication();
             app.UseStaticFiles();
-            app.UseCors(options=>
-            {
-                options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-            });
+            app.UseCors("AllowAll");
             app.UseMvc();
         }
     }

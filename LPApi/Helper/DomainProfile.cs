@@ -3,6 +3,8 @@ using Infrastructure.Entities;
 using Infrastructure.Model.Common;
 using Infrastructure.Model.Provider;
 using Infrastructure.Model.User;
+using MRDbIdentity.Domain;
+using System;
 
 namespace IdentityApi.Helper
 {
@@ -15,6 +17,19 @@ namespace IdentityApi.Helper
 
             // common models
             CreateMap<Language, LanguageDisplayModel>();
+
+            // user
+            CreateMap<AppUser, UserShortDataModel>()
+                .ForMember(x => x.AvatarSrc, opt => opt.ResolveUsing(z => z.Avatar?.Src))
+                .ForMember(x => x.CreatedTime, opt => opt.ResolveUsing(z => z.CreatedTime.ToLocalTime()))
+                .ForMember(x => x.UpdatedTime, opt => opt.ResolveUsing(z => z.UpdatedTime.ToLocalTime()));
+            CreateMap<AppUser, UserDataModel>()
+                .IncludeBase<AppUser, UserShortDataModel>();
+            CreateMap<UserSocial, UserDataSocialModel>()
+                .ForMember(x => x.CreatedTime, opt => opt.ResolveUsing(z => z.CreatedTime.ToLocalTime()));
+            CreateMap<AppUserProvider, UserDataProviderModel>();
+            CreateMap<UserTel, UserDataTel>()
+                .ForMember(x => x.CreatedTime, opt => opt.ResolveUsing(z => z.CreatedTime.ToLocalTime()));
 
             // provider models
             CreateMap<ProviderCategory, ProviderCategoryDisplayModel>();
