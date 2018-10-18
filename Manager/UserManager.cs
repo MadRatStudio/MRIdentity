@@ -6,7 +6,9 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using CommonApi.Errors;
 using CommonApi.Resopnse;
+using CommonApi.Response;
 using Dal;
 using Infrastructure.Entities;
 using Infrastructure.Model.User;
@@ -20,15 +22,46 @@ namespace Manager
 {
     public class UserManager : BaseManager
     {
-        public UserManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper) : base(httpContextAccessor, appUserManager, mapper)
+        protected readonly AppUserRepository _appUserRepository;
+
+        public UserManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper, AppUserRepository appUserRepository) : base(httpContextAccessor, appUserManager, mapper)
         {
+            _appUserRepository = appUserRepository;
         }
 
         #region admin
 
-        public async Task<ApiResponse> AdminGetCollection(int skip, int limit, string q)
+        public async Task<ApiListResponse<UserShortDataModel>> AdminGetCollection(int skip, int limit, string q)
         {
+            if (skip < 0) skip = 0;
+            if (limit > MAX_LIMIT) limit = MAX_LIMIT;
+            else if (limit < 0) limit = 1;
 
+            var list = await _appUserRepository.Get(skip, limit, q);
+            var result = new ApiListResponse<UserShortDataModel>
+            {
+                Skip = skip,
+                Limit = limit,
+                Total = await _appUserRepository.Count(),
+                Data = list?.Select(x => _mapper.Map<UserShortDataModel>(x)).ToList() ?? new List<UserShortDataModel>()
+            };
+
+            return result;
+        }
+
+        public async Task<ApiResponse<UserDataModel>> AdminGetUserById(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED));
+
+            var entity = await _appUserRepository.GetByIdAdmin(id);
+            if(entity == null)
+            {
+                return Fail(ECollection.Select(ECollection.ENTITY_NOT_FOUND, new ModelError("Id", null)));
+            }
+
+            var model = _mapper.Map<UserDataModel>(entity);
+            return Ok(model);
         }
 
         #endregion

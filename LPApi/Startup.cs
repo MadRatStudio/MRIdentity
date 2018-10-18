@@ -84,7 +84,7 @@ namespace IdentityApi
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials()));
             services.AddMvc().AddJsonOptions(options =>
             {
-                options.SerializerSettings.DateFormatString = "yyyy-MM-ddTH:mm:ss.fffZ";
+                options.SerializerSettings.DateFormatString = "yyyy-MM-ddTH:mm:ss.Z";
                 options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver()
                 {

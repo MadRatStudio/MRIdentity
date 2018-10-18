@@ -25,6 +25,7 @@ namespace IdentityApi.Init
             services.AddTransient<IRoleStore<Role>, RoleRepository>();
             services.AddTransient<IUserRepository<AppUser>, UserRepository<AppUser>>();
             services.AddTransient<IRoleRepository, RoleRepository>();
+            services.AddTransient<AppUserRepository>();
             services.AddTransient<SignInManager<User>>();
             services.AddTransient(x => AppUserManager.Create(new MongoClient(configuration["ConnectionStrings:Default"]).GetDatabase(configuration["Database:Name"])));
             services.AddTransient(x => new MongoClient(configuration["ConnectionStrings:Default"]).GetDatabase(configuration["Database:Name"]));
