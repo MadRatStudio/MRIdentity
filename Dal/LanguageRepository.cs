@@ -16,13 +16,19 @@ namespace Dal
 
         public async Task<IEnumerable<Language>> Search(int skip, int limit, string q)
         {
-            q = q.ToLower();
+            var filter = DbQuery;
 
-            var filter = DbQuery.CustomSearch(x
-                => x.Or(
-                    x.Regex(z => z.Code, new MongoDB.Bson.BsonRegularExpression($"{q}", "i")),
-                    x.Regex(z => z.Name, new MongoDB.Bson.BsonRegularExpression($"{q}", "i")),
-                    x.Regex(z => z.NativeName, new MongoDB.Bson.BsonRegularExpression($"{q}", "i")))); 
+            if (!string.IsNullOrWhiteSpace(q))
+            {
+                q = q.ToLower();
+
+                filter = DbQuery.CustomSearch(x
+                    => x.Or(
+                        x.Regex(z => z.Code, new MongoDB.Bson.BsonRegularExpression($"{q}", "i")),
+                        x.Regex(z => z.Name, new MongoDB.Bson.BsonRegularExpression($"{q}", "i")),
+                        x.Regex(z => z.NativeName, new MongoDB.Bson.BsonRegularExpression($"{q}", "i"))));
+            }
+
 
             filter.Limit = limit;
             filter.Skip = skip;

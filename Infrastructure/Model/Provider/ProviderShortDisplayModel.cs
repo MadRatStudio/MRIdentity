@@ -7,7 +7,7 @@ namespace Infrastructure.Model.Provider
     public class ProviderShortDisplayModel
     {
         public string Id { get; set; }
-        public string IsDisabled { get; set; }
+        public bool IsDisabled { get; set; }
 
         public string Name { get; set; }
         public string Slug { get; set; }

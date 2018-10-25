@@ -31,10 +31,12 @@ namespace IdentityApi.Helper
             CreateMap<UserTel, UserDataTel>()
                 .ForMember(x => x.CreatedTime, opt => opt.ResolveUsing(z => z.CreatedTime.ToLocalTime()));
 
+
             // provider models
             CreateMap<ProviderCategory, ProviderCategoryDisplayModel>();
             CreateMap<CategoryUpdateModel, ProviderCategory>();
             CreateMap<CategoryTranslationUpdateModel, ProviderCategoryTranslation>();
+            CreateMap<AppUser, ProviderOwner>();
 
             // provider tag
             CreateMap<ProviderTag, ProviderTagDisplayModel>();

@@ -17,8 +17,8 @@ namespace IdentityApi.Controllers
             _languageManager = languageManager;
         }
 
-        [Route("{skip}/{limit}/{q}")]
-        public async Task<IActionResult> Search(int skip, int limit, string q)
+        [Route("{skip}/{limit}")]
+        public async Task<IActionResult> Search(int skip, int limit, [FromQuery] string q)
         {
             return Json(await _languageManager.Search(skip, limit, q));
         }

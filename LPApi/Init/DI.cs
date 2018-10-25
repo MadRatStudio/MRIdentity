@@ -43,6 +43,7 @@ namespace IdentityApi.Init
             services.AddTransient<LanguageManager>();
             services.AddTransient<TagManager>();
             services.AddTransient<CategoryManager>();
+            services.AddTransient<ProviderManager>();
         }
     }
 }

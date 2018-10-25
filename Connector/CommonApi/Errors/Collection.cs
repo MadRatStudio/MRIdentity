@@ -59,6 +59,15 @@ namespace CommonApi.Errors
             UserMessage = "Requested entity not found"
         };
 
+        // undefined error
+
+        public static ApiError UNDEFINED_ERROR = new ApiError
+        {
+            Code = 900,
+            Message = "Undefined server error",
+            UserMessage = "Undefined server error. Connect to administrator"
+        };
+
 
         public static ApiError Select(ApiError error, object model = null, string localization = null)
         {
@@ -72,7 +81,7 @@ namespace CommonApi.Errors
 
             return error;
         }
-            
+
     }
 
 }

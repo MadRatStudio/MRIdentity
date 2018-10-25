@@ -4,8 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using CommonApi.Errors;
+using CommonApi.Models;
+using CommonApi.Resopnse;
 using CommonApi.Response;
 using Dal;
+using Infrastructure.Entities;
 using Infrastructure.Model.Provider;
 using Microsoft.AspNetCore.Http;
 
@@ -26,6 +30,38 @@ namespace Manager
             _providerCategoryRepository = providerCategoryRepository;
         }
 
+        /// <summary>
+        /// Create new provider
+        /// </summary>
+        /// <param name="model">new provider model</param>
+        /// <returns></returns>
+        public async Task<ApiResponse<IdNameModel>> Create(CategoryUpdateModel model)
+        {
+            if(model == null)
+                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("model", "Empty")));
+
+            var user = await GetCurrentUser();
+            if (!(await _appUserManager.IsInRoleAsync(user, "MANAGER")) && !(await _appUserManager.IsInRoleAsync(user, "ADMIN")))
+                return Fail(ECollection.Select(ECollection.ACCESS_DENIED));
+
+            if (string.IsNullOrWhiteSpace(model.Slug))
+                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("slug", "Empty")));
+
+            if(model.Translations == null || !model.Translations.Any())
+                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Translations", "required")));
+
+
+            var entity = _mapper.Map<Provider>(model);
+            entity.Owner = _mapper.Map<ProviderOwner>(user);
+
+            var result = await _providerRepository.Insert(entity);
+            return Ok(new IdNameModel
+            {
+                Id = result.Id,
+                Name = result.Name
+            });
+
+        }
 
         /// <summary>
         /// Get list of providers
@@ -41,7 +77,9 @@ namespace Manager
             if (limit < 1) limit = 1;
             if (limit > MAX_LIMIT) limit = MAX_LIMIT;
 
-            var list = (await _providerRepository.Get(x => x.State == true, skip, limit, x => x.CreatedTime, true))?.ToList() ?? new List<Infrastructure.Entities.Provider>();
+            if (string.IsNullOrWhiteSpace(languageCode)) languageCode = DEFAULT_LANGUAGE_CODE;
+
+            var list = (await _providerRepository.Get(x => x.State == true, skip, limit, x => x.CreatedTime, true))?.ToList() ?? new List<Provider>();
             var total = await _providerRepository.Count();
 
             var response = new ApiListResponse<ProviderShortDisplayModel>(skip, limit)
@@ -119,5 +157,25 @@ namespace Manager
             return response;
         }
 
+
+        public async Task<ApiResponse> Delete(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Id", "empty")));
+
+            var user = await GetCurrentUser();
+            var entity = await _providerRepository.GetFirst(id);
+
+            if (entity == null)
+                return Fail(ECollection.ENTITY_NOT_FOUND);
+
+            if (entity.Owner.Id != user.Id)
+                return Fail(ECollection.ACCESS_DENIED);
+
+            var result = await _providerRepository.RemoveSoft(id);
+            if (result.ModifiedCount == 1) return Ok();
+            return Fail(ECollection.UNDEFINED_ERROR);
+
+        }
     }
 }
