@@ -38,13 +38,29 @@ namespace IdentityApi.Helper
             CreateMap<CategoryTranslationUpdateModel, ProviderCategoryTranslation>();
             CreateMap<AppUser, ProviderOwner>();
 
+            CreateMap<ProviderUpdateModel, Provider>()
+                .ForMember(x => x.Tags, opt => opt.Ignore())
+                .ForMember(x => x.Category, opt => opt.Ignore());
+            CreateMap<ProviderTranslationUpdateModel, ProviderTranslation>();
+            CreateMap<ProviderSocialUpdateModel, ProviderSocial>();
+
+            CreateMap<Provider, ProviderUpdateModel>();
+            CreateMap<ProviderTranslation, ProviderTranslationUpdateModel>();
+            CreateMap<ProviderSocial, ProviderSocialUpdateModel>();
+
+
             // provider tag
             CreateMap<ProviderTag, ProviderTagDisplayModel>();
             CreateMap<ProviderTagCreateModel, ProviderTag>();
             CreateMap<ProviderTagTranslationCreateModel, ProviderTagTranslation>();
 
 
-            CreateMap<Provider, ProviderShortDisplayModel>();
+            CreateMap<Provider, ProviderShortDisplayModel>()
+                .ForMember(x => x.Category, t => t.Ignore())
+                .ForMember(x => x.Tags, t => t.Ignore());
+            CreateMap<ProviderCategory, ProviderCategoryDisplayModel>();
+            CreateMap<ProviderSocial, ProviderSocialDisplayModel>();
+            CreateMap<ProviderTag, ProviderTagDisplayModel>();
             CreateMap<Provider, ProviderDisplayModel>()
                 .IncludeBase<Provider, ProviderShortDisplayModel>();
 

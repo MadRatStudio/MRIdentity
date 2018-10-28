@@ -21,7 +21,7 @@ namespace IdentityApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Provider model)
+        public async Task<IActionResult> Create([FromBody] ProviderUpdateModel model)
         {
             if (!ModelState.IsValid)
             {

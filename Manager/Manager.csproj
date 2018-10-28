@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Connector\CommonApi\CommonApi.csproj" />
+    <ProjectReference Include="..\Connector\ConnectorS3\ConnectorS3.csproj" />
     <ProjectReference Include="..\Dal\Dal.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>

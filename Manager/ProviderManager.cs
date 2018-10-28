@@ -35,9 +35,9 @@ namespace Manager
         /// </summary>
         /// <param name="model">new provider model</param>
         /// <returns></returns>
-        public async Task<ApiResponse<IdNameModel>> Create(CategoryUpdateModel model)
+        public async Task<ApiResponse<IdNameModel>> Create(ProviderUpdateModel model)
         {
-            if(model == null)
+            if (model == null)
                 return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("model", "Empty")));
 
             var user = await GetCurrentUser();
@@ -47,12 +47,30 @@ namespace Manager
             if (string.IsNullOrWhiteSpace(model.Slug))
                 return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("slug", "Empty")));
 
-            if(model.Translations == null || !model.Translations.Any())
+            model.Slug = model.Slug.ToLower();
+
+            if (string.IsNullOrWhiteSpace(model.Category))
+                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Category", "Category slug is required")));
+
+            if (model.Translations == null || !model.Translations.Any())
                 return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Translations", "required")));
 
+            var isSlugExists = (await _providerRepository.Count(x => x.Slug == model.Slug && x.State)) > 0;
+            if (isSlugExists)
+                return Fail(ECollection.Select(ECollection.ENTITY_EXISTS));
+
+            var category = await _providerCategoryRepository.GetFirst(x => x.Slug == model.Category);
+            if (category == null)
+                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Category", $"Category with slug {model.Slug} do not exists")));
 
             var entity = _mapper.Map<Provider>(model);
             entity.Owner = _mapper.Map<ProviderOwner>(user);
+            entity.Category = new ProviderProviderCategory
+            {
+                CategoryId = category.Id,
+                Slug = category.Slug
+            };
+            entity.Tags = new List<ProviderProviderTag>();
 
             var result = await _providerRepository.Insert(entity);
             return Ok(new IdNameModel
@@ -101,7 +119,7 @@ namespace Manager
 
                 // set category
                 var category = allCategories.FirstOrDefault(x => x.Id == provider.Category?.CategoryId);
-                if(category != null)
+                if (category != null)
                 {
                     converted.Category = new ProviderCategoryDisplayModel
                     {
@@ -109,7 +127,7 @@ namespace Manager
                     };
 
 
-                    if(category.Translations.Any(z => z.LanguageCode == languageCode))
+                    if (category.Translations.Any(z => z.LanguageCode == languageCode))
                     {
                         converted.Category.Name = category.Translations.FirstOrDefault(x => x.LanguageCode == languageCode)?.Name;
                     }
@@ -124,32 +142,40 @@ namespace Manager
                 }
 
                 // set tags
-                var tags = new List<ProviderTagDisplayModel>();
-                foreach(var tag in provider.Tags)
+                if (provider.Tags != null && provider.Tags.Any())
                 {
-                    var convertedTag = _mapper.Map<ProviderTagDisplayModel>(tag);
-
-                    var t = allTags.FirstOrDefault(x => x.Id == tag.TagId);
-                    if (t == null) continue;
-
-
-                    if(t.Translations.Any(x => x.LanguageCode == languageCode))
+                    var tags = new List<ProviderTagDisplayModel>();
+                    foreach (var tag in provider.Tags)
                     {
-                        convertedTag.Name = t.Translations.FirstOrDefault(x => x.LanguageCode == languageCode)?.Name;
-                    }
-                    else if(t.Translations.Any(z => z.IsDefault))
-                    {
-                        convertedTag.Name = t.Translations.FirstOrDefault(x => x.IsDefault)?.Name;
-                    }
-                    else
-                    {
-                        continue;
+                        var convertedTag = _mapper.Map<ProviderTagDisplayModel>(tag);
+
+                        var t = allTags.FirstOrDefault(x => x.Id == tag.TagId);
+                        if (t == null) continue;
+
+
+                        if (t.Translations.Any(x => x.LanguageCode == languageCode))
+                        {
+                            convertedTag.Name = t.Translations.FirstOrDefault(x => x.LanguageCode == languageCode)?.Name;
+                        }
+                        else if (t.Translations.Any(z => z.IsDefault))
+                        {
+                            convertedTag.Name = t.Translations.FirstOrDefault(x => x.IsDefault)?.Name;
+                        }
+                        else
+                        {
+                            continue;
+                        }
+
+                        tags.Add(convertedTag);
                     }
 
-                    tags.Add(convertedTag);
+                    converted.Tags = tags;
+                }
+                else
+                {
+                    converted.Tags = new List<ProviderTagDisplayModel>();
                 }
 
-                converted.Tags = tags;
 
                 response.Data.Add(converted);
             }

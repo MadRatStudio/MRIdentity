@@ -22,7 +22,7 @@ namespace Infrastructure.Model.Provider
         public List<string> Tags { get; set; }
 
         public List<ProviderTranslationUpdateModel> Translations { get; set; }
-        public List<ProviderSocialUpdateModel> Socials { get; set; }
+        public List<ProviderSocialUpdateModel> Socials { get; set; } = new List<ProviderSocialUpdateModel>();
     }
 
     public class ProviderTranslationUpdateModel

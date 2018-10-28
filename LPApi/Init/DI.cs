@@ -1,4 +1,5 @@
-﻿using Dal;
+﻿using Amazon;
+using Dal;
 using Infrastructure.Entities;
 using Manager;
 using Microsoft.AspNetCore.Http;
@@ -36,6 +37,8 @@ namespace IdentityApi.Init
             services.AddTransient<ProviderRepository>();
             services.AddTransient<ProviderCategoryRepository>();
             services.AddTransient<ProviderTagRepository>();
+
+            services.AddTransient(x => new TmpBucket(RegionEndpoint.USEast1, "AKIAJJKBZQCLBYWOJX5A", "I0xyr6J2mPQaiENC1s16MTHbgek7A9i8ES1mdF16"));
 
             // managers
             services.AddTransient<AccountManager>();
