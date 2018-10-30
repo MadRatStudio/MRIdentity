@@ -22,7 +22,7 @@ namespace IdentityApi.Controllers
 
         [Route("tmp")]
         [HttpPost]
-        [ProducesResponseType(200, Type = typeof(ApiResponse<ImageUploadResult>))]
+        [ProducesResponseType(200, Type = typeof(ApiResponse<ImageModel>))]
         public async Task<IActionResult> UploadTmp([FromForm] IFormFile file)
         {
             return Ok(await _imageManager.UploadTmp(file));

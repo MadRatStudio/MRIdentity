@@ -25,8 +25,8 @@ namespace Infrastructure.Entities
         public List<ProviderTranslation> Translations { get; set; }
         public List<ProviderSocial> Socials { get; set; }
 
-        public string BackgroundUrl { get; set; }
-        public string IconUrl { get; set; }
+        public Image Background { get; set; }
+        public Image Avatar { get; set; }
 
         public string ProviderFingerprint { get; set; }
 

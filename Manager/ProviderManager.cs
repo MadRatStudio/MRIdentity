@@ -20,14 +20,19 @@ namespace Manager
         protected readonly ProviderRepository _providerRepository;
         protected readonly ProviderCategoryRepository _providerCategoryRepository;
         protected readonly ProviderTagRepository _providerTagRepository;
+        protected readonly ImageTmpBucket _imageTmpBucket;
+        protected readonly ImageOriginBucket _imageOriginBucket;
 
 
         public ProviderManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper,
-            ProviderRepository providerRepository, ProviderCategoryRepository providerCategoryRepository, ProviderTagRepository providerTagRepository) : base(httpContextAccessor, appUserManager, mapper)
+            ProviderRepository providerRepository, ProviderCategoryRepository providerCategoryRepository, ProviderTagRepository providerTagRepository,
+            ImageTmpBucket imageTmpBucket, ImageOriginBucket imageOriginBucket) : base(httpContextAccessor, appUserManager, mapper)
         {
             _providerRepository = providerRepository;
             _providerTagRepository = providerTagRepository;
             _providerCategoryRepository = providerCategoryRepository;
+            _imageTmpBucket = imageTmpBucket;
+            _imageOriginBucket = imageOriginBucket;
         }
 
         /// <summary>
@@ -71,6 +76,26 @@ namespace Manager
                 Slug = category.Slug
             };
             entity.Tags = new List<ProviderProviderTag>();
+
+            // set avatar
+            if(entity.Avatar != null)
+            {
+                var image = await _imageOriginBucket.MoveFrom(_imageTmpBucket.BucketFullPath, model.Avatar.Key);
+                if (image != null && image.IsSuccess)
+                {
+                    entity.Avatar.Url = image.Url;
+                }
+            }
+
+            // set background
+            if (entity.Background != null)
+            {
+                var image = await _imageOriginBucket.MoveFrom(_imageTmpBucket.BucketFullPath, model.Background.Key);
+                if (image != null && image.IsSuccess)
+                {
+                    entity.Background.Url = image.Url;
+                }
+            }
 
             var result = await _providerRepository.Insert(entity);
             return Ok(new IdNameModel
@@ -183,7 +208,11 @@ namespace Manager
             return response;
         }
 
-
+        /// <summary>
+        /// Delete provider
+        /// </summary>
+        /// <param name="id">id of provider</param>
+        /// <returns></returns>
         public async Task<ApiResponse> Delete(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
@@ -199,6 +228,7 @@ namespace Manager
                 return Fail(ECollection.ACCESS_DENIED);
 
             var result = await _providerRepository.RemoveSoft(id);
+
             if (result.ModifiedCount == 1) return Ok();
             return Fail(ECollection.UNDEFINED_ERROR);
 

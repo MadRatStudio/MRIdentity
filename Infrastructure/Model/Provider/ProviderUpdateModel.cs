@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Entities;
+using Infrastructure.Model.Common;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,8 +16,8 @@ namespace Infrastructure.Model.Provider
         public bool IsDisabled { get; set; }
         public string DisableMessage { get; set; }
 
-        public string BackgroundUrl { get; set; }
-        public string IconUrl { get; set; }
+        public ImageModel Avatar { get; set; }
+        public ImageModel Background { get; set; }
 
         public string Category { get; set; }
         public List<string> Tags { get; set; }

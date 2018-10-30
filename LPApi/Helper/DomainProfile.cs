@@ -18,6 +18,9 @@ namespace IdentityApi.Helper
             // common models
             CreateMap<Language, LanguageDisplayModel>();
 
+            CreateMap<Image, ImageModel>();
+            CreateMap<ImageModel, Image>();
+
             // user
             CreateMap<AppUser, UserShortDataModel>()
                 .ForMember(x => x.AvatarSrc, opt => opt.ResolveUsing(z => z.Avatar?.Src))

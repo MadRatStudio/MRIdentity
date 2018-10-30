@@ -21,8 +21,8 @@ namespace ConnectorS3
         protected string _bucketName;
         protected string _subdirectory;
 
-        protected string _bucketFullPath => string.IsNullOrWhiteSpace(_subdirectory) ? _bucketName : $"{_bucketName}/{_subdirectory}";
-        protected string _bucketLink(string key) => $"https://s3.amazonaws.com/{_bucketFullPath}/{key}";
+        public string BucketFullPath => string.IsNullOrWhiteSpace(_subdirectory) ? _bucketName : $"{_bucketName}/{_subdirectory}";
+        public string BucketLink(string key) => $"https://s3.amazonaws.com/{BucketFullPath}/{key}";
 
         protected TransferUtility _client => new TransferUtility(_id, _secret, _region);
 
@@ -60,8 +60,41 @@ namespace ConnectorS3
 
             try
             {
-                await _client.UploadAsync(model.CreateRequest(_bucketFullPath, key));
-                return new BucketUploadResponse(key, _bucketLink(key));
+                await _client.UploadAsync(model.CreateRequest(BucketFullPath, key));
+                return new BucketUploadResponse(key, BucketLink(key));
+            }
+            catch (Exception ex)
+            {
+                return new BucketUploadResponse(ex);
+            }
+        }
+
+        public async Task<BucketUploadResponse> MoveFrom(string from, string key)
+        {
+            try
+            {
+                var client = _client;
+                var response = await client.S3Client.CopyObjectAsync(from, key, BucketFullPath, key);
+                var delete = await client.S3Client.DeleteObjectAsync(from, key);
+                return new BucketUploadResponse
+                {
+                    Key = key,
+                    Url = BucketLink(key)
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BucketUploadResponse(ex);
+            }
+        }
+
+        public async Task<BucketUploadResponse> Delete(string key)
+        {
+            try
+            {
+                var client = _client;
+                await client.S3Client.DeleteObjectAsync(BucketFullPath, key);
+                return new BucketUploadResponse();
             }
             catch (Exception ex)
             {
@@ -77,16 +110,5 @@ namespace ConnectorS3
         public string Name { get; set; }
         public Stream ImageStream { get; set; }
         public string ContentType { get; set; }
-    }
-
-    public class BucketRresponse
-    {
-        public BucketError Error { get; set; }
-        public bool IsSuccess => Error == null;
-    }
-
-    public class BucketError
-    {
-
     }
 }

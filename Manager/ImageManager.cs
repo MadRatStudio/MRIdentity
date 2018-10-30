@@ -30,7 +30,7 @@ namespace Manager
             _originBucket = imageOriginBucket;
         }
 
-        public async Task<ApiResponse<ImageUploadResult>> UploadTmp(IFormFile file)
+        public async Task<ApiResponse<ImageModel>> UploadTmp(IFormFile file)
         {
             if (file == null)
             {
@@ -54,7 +54,7 @@ namespace Manager
                 return Fail(ECollection.Select(ECollection.UNDEFINED_ERROR, new ModelError("Image", string.Join(", ", bucketUploadResponse.Error.Messages))));
             }
 
-            return Ok(new ImageUploadResult
+            return Ok(new ImageModel
             {
                 IsTmp = true,
                 Key = bucketUploadResponse.Key,
@@ -62,6 +62,10 @@ namespace Manager
                 Url = bucketUploadResponse.Url
             });
 
+        }
+
+        public async Task MoveToOrigin(string key)
+        {
         }
     }
 }
