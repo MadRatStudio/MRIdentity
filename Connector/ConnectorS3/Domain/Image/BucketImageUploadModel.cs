@@ -9,15 +9,18 @@ namespace ConnectorS3.Domain.Image
 {
     public class BucketImageUploadModel : BucketUploadRequest
     {
-        public string MimeType { get; set; }
         public Stream Stream { get; set; }
+        public string Name { get; set; }
+        public string MimeType { get; set; }
+
+        public const string NAME_FIELD = "NAME";
 
         public BucketImageUploadModel()
         {
 
         }
 
-        public BucketImageUploadModel(Stream stream, string mimeType)
+        public BucketImageUploadModel(Stream stream, string name, string mimeType)
         {
             Stream = stream;
             MimeType = mimeType;
@@ -26,8 +29,10 @@ namespace ConnectorS3.Domain.Image
         public override TransferUtilityUploadRequest CreateRequest(string bucket, string key)
         {
             var t = base.CreateRequest(bucket, key);
+
             t.InputStream = Stream;
             t.ContentType = MimeType;
+            t.Metadata.Add(NAME_FIELD, Name);
 
             return t;
         }

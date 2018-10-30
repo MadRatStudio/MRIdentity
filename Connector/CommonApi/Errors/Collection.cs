@@ -59,6 +59,13 @@ namespace CommonApi.Errors
             UserMessage = "Requested entity not found"
         };
 
+        public static ApiError BAD_DATA_FORMAT = new ApiError
+        {
+            Code = 203,
+            Message = "Bad data format",
+            UserMessage = "Requested data format in not valid"
+        };
+
         // undefined error
 
         public static ApiError UNDEFINED_ERROR = new ApiError

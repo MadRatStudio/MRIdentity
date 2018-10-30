@@ -104,6 +104,7 @@ namespace IdentityApi
             app.UseDefaultFiles();
             app.UseAuthentication();
             app.UseStaticFiles();
+            app.UseDeveloperExceptionPage();
             app.UseCors("AllowAll");
             app.UseMvc();
         }

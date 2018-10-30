@@ -22,6 +22,7 @@ namespace ConnectorS3
         protected string _subdirectory;
 
         protected string _bucketFullPath => string.IsNullOrWhiteSpace(_subdirectory) ? _bucketName : $"{_bucketName}/{_subdirectory}";
+        protected string _bucketLink(string key) => $"https://s3.amazonaws.com/{_bucketFullPath}/{key}";
 
         protected TransferUtility _client => new TransferUtility(_id, _secret, _region);
 
@@ -60,7 +61,7 @@ namespace ConnectorS3
             try
             {
                 await _client.UploadAsync(model.CreateRequest(_bucketFullPath, key));
-                return new BucketUploadResponse(key, null);
+                return new BucketUploadResponse(key, _bucketLink(key));
             }
             catch (Exception ex)
             {
