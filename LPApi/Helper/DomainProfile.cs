@@ -65,7 +65,8 @@ namespace IdentityApi.Helper
             CreateMap<ProviderSocial, ProviderSocialDisplayModel>();
             CreateMap<ProviderTag, ProviderTagDisplayModel>();
             CreateMap<Provider, ProviderDisplayModel>()
-                .IncludeBase<Provider, ProviderShortDisplayModel>();
+                .IncludeBase<Provider, ProviderShortDisplayModel>()
+                .ForMember(x => x.Socials, t => t.Ignore());
 
         }
     }

@@ -107,6 +107,39 @@ namespace Manager
         }
 
         /// <summary>
+        /// Get provider
+        /// </summary>
+        /// <param name="slug"></param>
+        /// <returns></returns>
+        public async Task<ApiResponse<ProviderDisplayModel>> GetToDisplay(string slug, string languageCode)
+        {
+            var entity = await _providerRepository.GetFirst(x => x.Slug == slug && x.State);
+            if (entity == null)
+                return Fail(ECollection.ENTITY_NOT_FOUND);
+
+            var model = _mapper.Map<ProviderDisplayModel>(entity);
+            if (string.IsNullOrWhiteSpace(languageCode))
+                languageCode = DEFAULT_LANGUAGE_CODE;
+
+            var translation = entity.Translations?.FirstOrDefault(x => x.LanguageCode == languageCode);
+            if(translation == null)
+            {
+                translation = entity.Translations?.FirstOrDefault(x => x.LanguageCode == DEFAULT_LANGUAGE_CODE);
+            }
+
+            if(translation == null)
+            {
+                translation = new ProviderTranslation();
+            }
+
+            model.Description = translation.Description;
+            model.DisplayName = translation.DisplayName;
+            model.KeyWords = translation.KeyWords;
+
+            return Ok(model);
+        }
+
+        /// <summary>
         /// Get list of providers
         /// </summary>
         /// <param name="skip">Skip count</param>

@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Entities;
+using Infrastructure.Model.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
@@ -9,10 +10,13 @@ namespace Infrastructure.Model.Provider
 {
     public class ProviderDisplayModel : ProviderShortDisplayModel
     {
-        public bool DisableMessage { get; set; }
+        public string DisplayName { get; set; }
+        public string DisableMessage { get; set; }
         public string Description { get; set; }
-        public string BackgroundUrl { get; set; }
+
+        public ImageModel Background { get; set; }
         public List<ProviderSocialDisplayModel> Socials { get; set; }
+        public string KeyWords { get; set; }
     }
 
     public class ProviderSocialDisplayModel

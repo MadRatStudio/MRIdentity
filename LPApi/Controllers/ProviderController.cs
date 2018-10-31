@@ -2,6 +2,7 @@
 using CommonApi.Response;
 using Infrastructure.Model.Provider;
 using Manager;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 namespace IdentityApi.Controllers
 {
     [Route("provider")]
+    [Authorize(Roles = "ADMIN")]
     public class ProviderController : Controller
     {
         protected readonly ProviderManager _providerManager;
@@ -32,7 +34,17 @@ namespace IdentityApi.Controllers
         }
 
         [HttpGet]
+        [Route("{slug}")]
+        [ProducesResponseType(200, Type = typeof(ApiResponse<ProviderDisplayModel>))]
+        [AllowAnonymous]
+        public async Task<IActionResult> Get(string slug, [FromQuery] string languageCode = null)
+        {
+            return Ok(await _providerManager.GetToDisplay(slug, languageCode));
+        }
+
+        [HttpGet]
         [Route("{skip}/{limit}")]
+        [AllowAnonymous]
         [ProducesResponseType(200, Type = typeof(ApiListResponse<ProviderShortDisplayModel>))]
         public async Task<IActionResult> GetList(int skip, int limit, [FromQuery] string languageCode = null, [FromQuery] string q = null)
         {
