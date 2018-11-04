@@ -13,6 +13,8 @@ namespace Infrastructure.Model.Provider
         public string Name { get; set; }
         public string Slug { get; set; }
 
+        public string HomePage { get; set; }
+
         public ImageModel Avatar { get; set; }
 
         public ProviderCategoryDisplayModel Category { get; set; }

@@ -13,7 +13,7 @@ namespace IdentityApi.Controllers
 {
     [Route("provider")]
     [Authorize(Roles = "ADMIN")]
-    public class ProviderController : Controller
+    public class ProviderController : BaseController
     {
         protected readonly ProviderManager _providerManager;
 
@@ -27,7 +27,7 @@ namespace IdentityApi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadModelResponse(ModelState);
             }
 
             return Ok(await _providerManager.Create(model));

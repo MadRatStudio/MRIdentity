@@ -18,6 +18,7 @@ namespace IdentityApi.Controllers
         }
 
         [Route("{skip}/{limit}")]
+        [HttpGet]
         public async Task<IActionResult> Search(int skip, int limit, [FromQuery] string q)
         {
             return Json(await _languageManager.Search(skip, limit, q));

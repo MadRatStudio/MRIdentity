@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using IdentityApi.Extensions;
 using Infrastructure.Entities;
 using Infrastructure.Model.Common;
 using Infrastructure.Model.Provider;
@@ -51,6 +52,12 @@ namespace IdentityApi.Helper
             CreateMap<ProviderTranslation, ProviderTranslationUpdateModel>();
             CreateMap<ProviderSocial, ProviderSocialUpdateModel>();
 
+            // provider fingerprint
+            CreateMap<ProviderFingerprint, ProviderFingerprintDisplayModel>()
+                .ForMember(x => x.FingerprintUpdateTime, t => t.ResolveUsing(x => x.FingerprintUpdateTime.ToLocalTime()));
+            CreateMap<ProviderFingerprintCreateModel, ProviderFingerprint>()
+                .ForMember(x => x.FingerprintUpdateTime, t => t.ResolveUsing(x => DateTime.UtcNow));
+
 
             // provider tag
             CreateMap<ProviderTag, ProviderTagDisplayModel>();
@@ -67,7 +74,6 @@ namespace IdentityApi.Helper
             CreateMap<Provider, ProviderDisplayModel>()
                 .IncludeBase<Provider, ProviderShortDisplayModel>()
                 .ForMember(x => x.Socials, t => t.Ignore());
-
         }
     }
 }

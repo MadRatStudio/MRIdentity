@@ -2,6 +2,7 @@
 using CommonApi.Resopnse;
 using Infrastructure.Model.Provider;
 using Manager;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,7 @@ namespace IdentityApi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "ADMIN, MANAGER")]
         [ProducesResponseType(200, Type = typeof(ApiResponse<IdNameModel>))]
         public async Task<IActionResult> Create([FromBody] ProviderTagCreateModel model)
         {

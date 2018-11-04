@@ -35,6 +35,19 @@ namespace CommonApi.Errors
             UserMessage = "User not found"
         };
 
+        public static ApiError PROVIDER_NOT_FOUND = new ApiError
+        {
+            Code = 103,
+            Message = "Provider not found",
+            UserMessage = "Requested provider not found"
+        };
+
+        public static ApiError PROVIDER_UNAVALIABLE = new ApiError
+        {
+            Code = 104,
+            Message = "Provider unavaliable",
+            UserMessage = "Requested provider is unavaliable now"
+        };
 
         // model damaged
 
@@ -64,6 +77,13 @@ namespace CommonApi.Errors
             Code = 203,
             Message = "Bad data format",
             UserMessage = "Requested data format in not valid"
+        };
+
+        public static ApiError TRANSFER_IMAGE_ERROR = new ApiError
+        {
+            Code = 204,
+            Message = "Image upload erro",
+            UserMessage = "Can not upload image"
         };
 
         // undefined error

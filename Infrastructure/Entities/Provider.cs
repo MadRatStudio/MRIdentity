@@ -20,7 +20,13 @@ namespace Infrastructure.Entities
         public bool IsDisabled { get; set; }
         public string DisableMessage { get; set; }
 
-        public string RedirectUrl { get; set; }
+        // server info
+
+        public string HomePage { get; set; }
+        public string LoginRedirectUrl { get; set; }
+        public List<ProviderFingerprint> Fingerprints { get; set; }
+
+        // end server info
 
         public List<ProviderTranslation> Translations { get; set; }
         public List<ProviderSocial> Socials { get; set; }
@@ -28,10 +34,16 @@ namespace Infrastructure.Entities
         public Image Background { get; set; }
         public Image Avatar { get; set; }
 
-        public string ProviderFingerprint { get; set; }
-
         public ProviderProviderCategory Category { get; set; }
         public List<ProviderProviderTag> Tags { get; set; }
+    }
+
+    public class ProviderFingerprint
+    {
+        public string Name { get; set; }
+        public string Domain { get; set; }
+        public string Fingerprint { get; set; }
+        public DateTime FingerprintUpdateTime { get; set; }
     }
 
     public class ProviderOwner

@@ -19,19 +19,6 @@ namespace IdentityApi.Controllers
             _accountManager = accountManager;
         }
 
-        [Route("anonimus")]
-        public IActionResult Anonimus()
-        {
-            return Ok("Anonimusu");
-        }
-
-        [Route("auth")]
-        [Authorize]
-        public IActionResult Auth()
-        {
-            return Ok("Some secret data");
-        }
-
         [Route("login")]
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] UserLoginModel model)

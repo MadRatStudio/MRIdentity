@@ -49,6 +49,7 @@ namespace IdentityApi.Init
             services.AddTransient<CategoryManager>();
             services.AddTransient<ProviderManager>();
             services.AddTransient<ImageManager>();
+            services.AddTransient<LoginManager>();
         }
     }
 }

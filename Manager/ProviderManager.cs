@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -11,7 +13,9 @@ using CommonApi.Response;
 using Dal;
 using Infrastructure.Entities;
 using Infrastructure.Model.Provider;
+using Manager.Options;
 using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Manager
 {
@@ -78,7 +82,7 @@ namespace Manager
             entity.Tags = new List<ProviderProviderTag>();
 
             // set avatar
-            if(entity.Avatar != null)
+            if (entity.Avatar != null)
             {
                 var image = await _imageOriginBucket.MoveFrom(_imageTmpBucket.BucketFullPath, model.Avatar.Key);
                 if (image != null && image.IsSuccess)
@@ -107,6 +111,51 @@ namespace Manager
         }
 
         /// <summary>
+        /// Create fingerprint for provider
+        /// </summary>
+        /// <param name="providerId">Target provider id</param>
+        /// <param name="model">Create fingerprint model</param>
+        /// <returns>Provider fingerprint display model</returns>
+        public async Task<ApiResponse<ProviderFingerprintDisplayModel>> CreateFingerprint(string providerId, ProviderFingerprintCreateModel model)
+        {
+            if (string.IsNullOrWhiteSpace(providerId))
+                return Fail(ECollection.MODEL_DAMAGED);
+
+            if (model == null)
+                return Fail(ECollection.MODEL_DAMAGED);
+
+            if (string.IsNullOrWhiteSpace(model.Name))
+                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Name", "Name is required")));
+
+            var entity = await _providerRepository.GetFirst(providerId);
+            if (entity == null)
+                return Fail(ECollection.ENTITY_NOT_FOUND);
+
+            if (entity.Owner.Id != (await GetCurrentUser())?.Id)
+                return Fail(ECollection.ACCESS_DENIED);
+
+            if (entity.Fingerprints == null)
+                entity.Fingerprints = new List<ProviderFingerprint>();
+
+            if (entity.Fingerprints.Any(x => x.Name.ToLower() == model.Name.ToLower()))
+                return Fail(ECollection.Select(ECollection.ENTITY_EXISTS, new ModelError("Fingerprint", "Fingerprint with this name is exists")));
+
+            if (entity.Fingerprints == null)
+                entity.Fingerprints = new List<ProviderFingerprint>();
+
+
+            var fingerprint = _mapper.Map<ProviderFingerprint>(model);
+
+            fingerprint.Fingerprint = _generateFingerprint(entity, fingerprint);
+            fingerprint.FingerprintUpdateTime = DateTime.UtcNow;
+
+            entity.Fingerprints.Add(fingerprint);
+            await _providerRepository.UpdateFingerprints(entity);
+
+            return Ok(_mapper.Map<ProviderFingerprintDisplayModel>(fingerprint));
+        }
+
+        /// <summary>
         /// Get provider
         /// </summary>
         /// <param name="slug"></param>
@@ -122,12 +171,12 @@ namespace Manager
                 languageCode = DEFAULT_LANGUAGE_CODE;
 
             var translation = entity.Translations?.FirstOrDefault(x => x.LanguageCode == languageCode);
-            if(translation == null)
+            if (translation == null)
             {
                 translation = entity.Translations?.FirstOrDefault(x => x.LanguageCode == DEFAULT_LANGUAGE_CODE);
             }
 
-            if(translation == null)
+            if (translation == null)
             {
                 translation = new ProviderTranslation();
             }
@@ -241,6 +290,125 @@ namespace Manager
             return response;
         }
 
+        public async Task<ApiListResponse<ProviderFingerprintDisplayModel>> GetProviderFingerprints(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+                return FailList<ProviderFingerprintDisplayModel>(ECollection.MODEL_DAMAGED);
+
+            var user = await GetCurrentUser();
+            if (!await _providerRepository.ExistsWithOwner(id, user.Id))
+                return FailList<ProviderFingerprintDisplayModel>(ECollection.ACCESS_DENIED);
+
+            var entity = await _providerRepository.GetFirst(id);
+            if (entity.Fingerprints == null || !entity.Fingerprints.Any())
+                return new ApiListResponse<ProviderFingerprintDisplayModel>
+                {
+                    Data = new List<ProviderFingerprintDisplayModel>(),
+                    Error = null,
+                    Skip = 0,
+                    Limit = 1,
+                    Total = 0
+                };
+
+            var list = entity.Fingerprints.Select(x => _mapper.Map<ProviderFingerprintDisplayModel>(x)).ToList();
+            return new ApiListResponse<ProviderFingerprintDisplayModel>
+            {
+                Data = list,
+                Limit = list.Count,
+                Skip = 0,
+                Total = list.Count
+            };
+        }
+
+        /// <summary>
+        /// Updates provider model
+        /// </summary>
+        /// <param name="model">Provider to update</param>
+        /// <returns>Provider updpate model</returns>
+        public async Task<ApiResponse<ProviderUpdateModel>> Update(ProviderUpdateModel model)
+        {
+            if (model == null)
+                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("model", "Empty")));
+
+            var user = await GetCurrentUser();
+            if (!(await _appUserManager.IsInRoleAsync(user, "MANAGER")) && !(await _appUserManager.IsInRoleAsync(user, "ADMIN")))
+                return Fail(ECollection.Select(ECollection.ACCESS_DENIED));
+
+            if (string.IsNullOrWhiteSpace(model.Slug))
+                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("slug", "Empty")));
+
+            model.Slug = model.Slug.ToLower();
+
+            if (string.IsNullOrWhiteSpace(model.Category))
+                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Category", "Category slug is required")));
+
+            if (model.Translations == null || !model.Translations.Any())
+                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Translations", "required")));
+
+            if (model.Translations.Count(x => x.IsDefault) != 1)
+                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Translation", "Required one default translation")));
+
+            var entity = await _providerRepository.GetFirst(model.Id);
+            if (entity == null)
+                return Fail(ECollection.Select(ECollection.USER_NOT_FOUND));
+
+            if (entity.Owner.Id != (await GetCurrentUser()).Id)
+                return Fail(ECollection.ACCESS_DENIED);
+
+            var category = await _providerCategoryRepository.GetFirst(x => x.Slug == model.Category);
+            if (category == null)
+                return Fail(ECollection.Select(ECollection.ENTITY_NOT_FOUND, new ModelError("Category", "Category not found")));
+
+            var newEntity = _mapper.Map<Provider>(model);
+            newEntity.Owner = entity.Owner;
+            newEntity.Category = new ProviderProviderCategory
+            {
+                CategoryId = category.Id,
+                Slug = category.Slug
+            };
+
+            bool removeAvatar = false;
+            bool removeBackground = false;
+
+            if (newEntity.Avatar.Key != entity.Avatar.Key)
+            {
+                var aMoveResponse = await _imageOriginBucket.MoveFrom(_imageTmpBucket.BucketFullPath, newEntity.Avatar.Key);
+                if (!aMoveResponse.IsSuccess)
+                    return Fail(ECollection.TRANSFER_IMAGE_ERROR);
+
+                newEntity.Avatar.Url = aMoveResponse.Url;
+                removeAvatar = true;
+            }
+
+            if (newEntity.Background.Key != entity.Background.Key)
+            {
+                var bMoveResponse = await _imageOriginBucket.MoveFrom(_imageTmpBucket.BucketFullPath, newEntity.Avatar.Key);
+                if (!bMoveResponse.IsSuccess)
+                    return Fail(ECollection.TRANSFER_IMAGE_ERROR);
+
+                newEntity.Background.Key = bMoveResponse.Key;
+                removeBackground = true;
+            }
+
+            if (removeAvatar)
+            {
+                await _imageOriginBucket.Delete(entity.Avatar.Key);
+                await _imageTmpBucket.Delete(newEntity.Avatar.Key);
+            }
+
+            if (removeBackground)
+            {
+                await _imageOriginBucket.Delete(entity.Background.Key);
+                await _imageTmpBucket.Delete(newEntity.Background.Key);
+            }
+
+            var replaceResponse = await _providerRepository.Replace(newEntity);
+            if (replaceResponse == null)
+                return Fail(ECollection.UNDEFINED_ERROR);
+
+            return Ok(_mapper.Map<ProviderUpdateModel>(newEntity));
+        }
+
         /// <summary>
         /// Delete provider
         /// </summary>
@@ -265,6 +433,57 @@ namespace Manager
             if (result.ModifiedCount == 1) return Ok();
             return Fail(ECollection.UNDEFINED_ERROR);
 
+        }
+
+        /// <summary>
+        /// Delete providers fingerprint
+        /// </summary>
+        /// <param name="id">provider id</param>
+        /// <param name="name">fingerprint name</param>
+        /// <returns></returns>
+        public async Task<ApiResponse> DeleteFingerprint(string id, string name)
+        {
+            if (string.IsNullOrWhiteSpace(id) || string.IsNullOrWhiteSpace(name))
+                return Fail(ECollection.MODEL_DAMAGED);
+
+            var user = await GetCurrentUser();
+            if (!(await _providerRepository.ExistsWithOwner(id, user.Id)))
+                return Fail(ECollection.ENTITY_NOT_FOUND);
+
+            var entity = await _providerRepository.GetFirst(id);
+            if (entity.Fingerprints == null || !entity.Fingerprints.Any(x => x.Name.ToLower() == name.ToLower()))
+                return Fail(ECollection.Select(ECollection.ENTITY_NOT_FOUND, new ModelError("Fingerprint", "Fingerprint not found")));
+
+            entity.Fingerprints.RemoveAll(x => x.Name.ToLower() == name.ToLower());
+            await _providerRepository.Replace(entity);
+
+            return Ok();
+        }
+
+        protected string _generateFingerprint(Provider provider, ProviderFingerprint fingerprint)
+        {
+            var now = DateTime.UtcNow;
+
+            var jwt = new JwtSecurityToken(
+                issuer: AuthOptions.ISSUER,
+                audience: fingerprint.Domain,
+                notBefore: now,
+                claims: _generateClaims(provider, fingerprint).Claims,
+                signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+
+            return new JwtSecurityTokenHandler().WriteToken(jwt);
+        }
+
+        protected ClaimsIdentity _generateClaims(Provider provider, ProviderFingerprint fingerprint)
+        {
+            var list = new List<Claim>
+            {
+                new Claim(ProviderTokenOptions.PROVIDER_ID_NAME, provider.Id),
+                new Claim(ProviderTokenOptions.PROVIDER_OWNER_ID_NAME, provider.Owner.Id),
+                new Claim(ProviderTokenOptions.PROVIDER_DOMAIN_NAME, fingerprint.Domain),
+            };
+
+            return new ClaimsIdentity(list);
         }
     }
 }

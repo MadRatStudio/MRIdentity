@@ -4,6 +4,7 @@ using MRDbIdentity.Infrastructure.Interface;
 using MRDbIdentity.Service;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,6 +47,38 @@ namespace Dal
             return await GetFirst(query);
         }
 
+        public async Task<AppUserProvider> GetProvider(string id, string providerId)
+        {
+            var q = DbQuery
+                .CustomSearch(x => x.And(
+                    x.Eq(z => z.Id, id),
+                    x.ElemMatch(z => z.ConnectedProviders, z => z.ProviderId == providerId)))
+                .Projection(x =>
+                    x.Include(z => z.ConnectedProviders)
+                    .ElemMatch(z => z.ConnectedProviders, z => z.ProviderId == providerId)
+                    .Slice(z => z.ConnectedProviders, 0, 1));
+
+            return (await Get(q))?.FirstOrDefault()?.ConnectedProviders?.FirstOrDefault();
+        }
+
+        public async Task<UpdateResult> AddProvider(string id, AppUserProvider provider)
+        {
+            var query = DbQuery.Eq(x => x.Id, id).Update(x => x.AddToSet(z => z.ConnectedProviders, provider));
+            return await Update(query);
+        }
+
+        public async Task<UpdateResult> AddProviderMeta(string id, string providerId, AppUserProviderMeta meta)
+        {
+            var query = DbQuery.CustomSearch(x => x.And(
+                x.Eq(z => z.Id, id),
+                x.ElemMatch(z => z.ConnectedProviders, c => c.ProviderId == providerId)
+                ))
+                .Update(x => x.AddToSet(z => z
+                    .ConnectedProviders[-1].Metadata, meta)
+                    .Set(z => z.UpdatedTime, DateTime.UtcNow));
+
+            return await Update(query);
+        }
 
         protected Expression<Func<ProjectionDefinitionBuilder<AppUser>, ProjectionDefinition<AppUser>>> _shortUserProjection =>
             x => x

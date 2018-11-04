@@ -9,8 +9,8 @@ namespace Infrastructure.Entities
 {
     public class AppUser : User, IEntity
     {
-        public List<UserSocial> Socials { get; set; }
-        public List<AppUserProvider> ConnectedProviders { get; set; }
+        public List<UserSocial> Socials { get; set; } = new List<UserSocial>();
+        public List<AppUserProvider> ConnectedProviders { get; set; } = new List<AppUserProvider>();
     }
 
     public class UserSocial
@@ -24,9 +24,14 @@ namespace Infrastructure.Entities
     {
         public string ProviderId { get; set; }
         public string ProviderName { get; set; }
-        public string ProviderFingerprint { get; set; }
-        public DateTime CreatedTime { get; set; }
-        public string UserId { get; set; }
-        public string BrowserMeta { get; set; }
+        public DateTime UpdatedTime { get; set; }
+        public List<AppUserProviderMeta> Metadata { get; set; } = new List<AppUserProviderMeta>();
+    }
+
+    public class AppUserProviderMeta
+    {
+        public string Ip { get; set; }
+        public string UserAgent { get; set; }
+        public DateTime UpdatedTime { get; set; }
     }
 }

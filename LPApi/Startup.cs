@@ -18,6 +18,10 @@ using AutoMapper.Execution;
 using AutoMapper;
 using IdentityApi.Init;
 using Newtonsoft.Json.Serialization;
+using Infrastructure.System.Provider;
+using System.Reflection;
+using System.IO;
+using System;
 
 namespace IdentityApi
 {
@@ -69,20 +73,28 @@ namespace IdentityApi
             {
                 c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info
                 {
-                    Title = "Mad Rat Identity Api",
+                    Title = "Auto generated Identity Api",
                     Version = "v1",
                     Contact = new Swashbuckle.AspNetCore.Swagger.Contact
                     {
                         Email = "oleg.timofeev20@gmail.com",
                         Name = "Oleh Tymofieiev",
-                        Url = "madrat.studio"
+                        Url = "http://identity_dev.madrat.studio"
                     }
                 });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.XML";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+
+                c.IncludeXmlComments(xmlPath);
             });
 
             services.AddAutoMapper();
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials()));
-            services.AddMvc().AddJsonOptions(options =>
+            services.AddMvc(o =>
+            {
+                o.ModelMetadataDetailsProviders.Add(new ModelRequiredProvider());
+            }).AddJsonOptions(options =>
             {
                 options.SerializerSettings.DateFormatString = "yyyy-MM-ddTH:mm:ss.Z";
                 options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
@@ -91,6 +103,7 @@ namespace IdentityApi
                     NamingStrategy = new SnakeCaseNamingStrategy()
                 };
             });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -104,9 +117,14 @@ namespace IdentityApi
             app.UseDefaultFiles();
             app.UseAuthentication();
             app.UseStaticFiles();
-            app.UseDeveloperExceptionPage();
             app.UseCors("AllowAll");
             app.UseMvc();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(o =>
+            {
+                o.SwaggerEndpoint("/swagger/v1/swagger.json", "Auto generated Identity Api");
+            });
         }
     }
 }
