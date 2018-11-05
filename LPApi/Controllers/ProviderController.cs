@@ -51,6 +51,27 @@ namespace IdentityApi.Controllers
             return Ok(await _providerManager.Get(skip, limit, languageCode, q));
         }
 
+        [HttpPut]
+        [Route("{slug}")]
+        [ProducesResponseType(200, Type = typeof(ApiResponse<ProviderUpdateModel>))]
+        public async Task<IActionResult> GetUpdateModel(string slug)
+        {
+            if (string.IsNullOrWhiteSpace(slug))
+                return BadRequest();
+
+            return Ok(await _providerManager.GetUpdateModel(slug));
+        }
+
+        [HttpPut]
+        [ProducesResponseType(200, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> Update([FromBody] ProviderUpdateModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadModelResponse(ModelState);
+
+            return Ok(await _providerManager.Update(model));
+        }
+
         [HttpDelete]
         [Route("{id}")]
         [ProducesResponseType(200, Type = typeof(ApiResponse))]

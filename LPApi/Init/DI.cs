@@ -21,6 +21,9 @@ namespace IdentityApi.Init
     {
         public static void AddDependencies(IServiceCollection services, IConfiguration configuration)
         {
+            // new dependency
+
+
             // Identity Services
             services.AddTransient<IUserStore<AppUser>, UserRepository<AppUser>>();
             services.AddTransient<IRoleStore<Role>, RoleRepository>();
@@ -31,15 +34,33 @@ namespace IdentityApi.Init
             services.AddTransient(x => AppUserManager.Create(new MongoClient(configuration["ConnectionStrings:Default"]).GetDatabase(configuration["Database:Name"])));
             services.AddTransient(x => new MongoClient(configuration["ConnectionStrings:Default"]).GetDatabase(configuration["Database:Name"]));
 
+
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+            services.AddTransient<ImageTmpBucket>(x => (ImageTmpBucket)new ImageTmpBucket(RegionEndpoint.USEast1, "AKIAJJKBZQCLBYWOJX5A", "I0xyr6J2mPQaiENC1s16MTHbgek7A9i8ES1mdF16").SetBucket("madrat-media").SetSubdirectory("img_tmp"));
+            services.AddTransient<ImageOriginBucket>(x => (ImageOriginBucket)new ImageOriginBucket(RegionEndpoint.USEast1, "AKIAJJKBZQCLBYWOJX5A", "I0xyr6J2mPQaiENC1s16MTHbgek7A9i8ES1mdF16").SetBucket("madrat-media").SetSubdirectory("img_origin"));
+
+            Type[] ignoreRepos = new Type[] { typeof(AppUserManager), typeof(ImageTmpBucket), typeof(ImageOriginBucket) };
+
+            // repos
+            services.Scan(x =>
+                x.FromAssemblyOf<ProviderRepository>()
+                .AddClasses(c => c.Where(z => !ignoreRepos.Contains(z)))
+                .AsSelf().WithTransientLifetime());
+
+            //managers
+            services.Scan(x => x
+                .FromAssemblyOf<AccountManager>()
+                .AddClasses(true)
+                .AsSelf()
+                .WithTransientLifetime());
+
+            /*
             services.AddTransient<LanguageRepository>();
             services.AddTransient<ProviderRepository>();
             services.AddTransient<ProviderCategoryRepository>();
             services.AddTransient<ProviderTagRepository>();
 
-            services.AddTransient<ImageTmpBucket>(x => (ImageTmpBucket) new ImageTmpBucket(RegionEndpoint.USEast1, "AKIAJJKBZQCLBYWOJX5A", "I0xyr6J2mPQaiENC1s16MTHbgek7A9i8ES1mdF16").SetBucket("madrat-media").SetSubdirectory("img_tmp"));
-            services.AddTransient<ImageOriginBucket>(x => (ImageOriginBucket) new ImageOriginBucket(RegionEndpoint.USEast1, "AKIAJJKBZQCLBYWOJX5A", "I0xyr6J2mPQaiENC1s16MTHbgek7A9i8ES1mdF16").SetBucket("madrat-media").SetSubdirectory("img_origin"));
 
             // managers
             services.AddTransient<AccountManager>();
@@ -50,6 +71,7 @@ namespace IdentityApi.Init
             services.AddTransient<ProviderManager>();
             services.AddTransient<ImageManager>();
             services.AddTransient<LoginManager>();
+            */
         }
     }
 }

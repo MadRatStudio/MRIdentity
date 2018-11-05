@@ -23,7 +23,6 @@ namespace Infrastructure.Model.Provider
         [Required]
         public bool IsDisabled { get; set; }
 
-        [Required]
         public string DisableMessage { get; set; }
 
         [Required]

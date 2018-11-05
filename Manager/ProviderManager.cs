@@ -214,7 +214,7 @@ namespace Manager
             };
 
             var categoriesToDownload = list.Select(x => x.Category.CategoryId);
-            var tagsToDownload = list.SelectMany(x => x.Tags).GroupBy(x => x.TagId).Select(x => x.Key);
+            var tagsToDownload = list.Where(x => x.Tags != null).SelectMany(x => x.Tags).GroupBy(x => x.TagId).Select(x => x.Key);
 
             var allCategories = await _providerCategoryRepository.GetAll(categoriesToDownload);
             var allTags = await _providerTagRepository.GetAll(tagsToDownload);
@@ -290,6 +290,11 @@ namespace Manager
             return response;
         }
 
+        /// <summary>
+        /// Get provider`s fingerprints
+        /// </summary>
+        /// <param name="id">Id of provider</param>
+        /// <returns>List response of provider`s fingerprints</returns>
         public async Task<ApiListResponse<ProviderFingerprintDisplayModel>> GetProviderFingerprints(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
@@ -318,6 +323,30 @@ namespace Manager
                 Skip = 0,
                 Total = list.Count
             };
+        }
+
+        /// <summary>
+        /// Get model for provider update
+        /// </summary>
+        /// <param name="slug"></param>
+        /// <returns></returns>
+        public async Task<ApiResponse<ProviderUpdateModel>> GetUpdateModel(string slug)
+        {
+            if (string.IsNullOrWhiteSpace(slug))
+                return Fail(ECollection.MODEL_DAMAGED);
+
+            var entity = await _providerRepository.GetFirst(x => x.Slug == slug.ToLower() && x.State);
+            if (entity == null)
+                return Fail(ECollection.ENTITY_NOT_FOUND);
+
+            var user = await GetCurrentUser();
+            if (entity.Owner.Id != user.Id)
+                return Fail(ECollection.ACCESS_DENIED);
+
+            var model = _mapper.Map<ProviderUpdateModel>(entity);
+            model.Category = entity.Category.Slug;
+
+            return Ok(model);
         }
 
         /// <summary>
