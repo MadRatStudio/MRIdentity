@@ -15,7 +15,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Connector", "Connector", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonApi", "Connector\CommonApi\CommonApi.csproj", "{FFF9B64D-061E-42CA-AD4E-34D6FFCEDECE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConnectorS3", "Connector\ConnectorS3\ConnectorS3.csproj", "{C9E40421-A4D4-41F4-AC52-A3B8D0D1A71D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConnectorS3", "Connector\ConnectorS3\ConnectorS3.csproj", "{C9E40421-A4D4-41F4-AC52-A3B8D0D1A71D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service", "Service\Service.csproj", "{17EF55D6-DF73-4660-BAAE-8996153A26FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,10 @@ Global
 		{C9E40421-A4D4-41F4-AC52-A3B8D0D1A71D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9E40421-A4D4-41F4-AC52-A3B8D0D1A71D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9E40421-A4D4-41F4-AC52-A3B8D0D1A71D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17EF55D6-DF73-4660-BAAE-8996153A26FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17EF55D6-DF73-4660-BAAE-8996153A26FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17EF55D6-DF73-4660-BAAE-8996153A26FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17EF55D6-DF73-4660-BAAE-8996153A26FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

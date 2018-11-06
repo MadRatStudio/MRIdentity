@@ -49,6 +49,13 @@ namespace CommonApi.Errors
             UserMessage = "Requested provider is unavaliable now"
         };
 
+        public static ApiError USER_BLOCKED = new ApiError
+        {
+            Code = 105,
+            Message = "User is blocked",
+            UserMessage = "Current user is blocked"
+        };
+
         // model damaged
 
         public static ApiError MODEL_DAMAGED = new ApiError

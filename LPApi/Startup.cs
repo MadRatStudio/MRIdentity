@@ -22,6 +22,7 @@ using Infrastructure.System.Provider;
 using System.Reflection;
 using System.IO;
 using System;
+using Hangfire;
 
 namespace IdentityApi
 {
@@ -48,6 +49,8 @@ namespace IdentityApi
                         ValidateIssuer = true,
                         ValidIssuer = AuthOptions.ISSUER,
 
+                        ValidAudience = AuthOptions.AUDIENCE,
+
                         ValidateLifetime = true,
                         IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
                         ValidateIssuerSigningKey = true
@@ -57,7 +60,6 @@ namespace IdentityApi
                     parameters.ValidateAudience = false;
 #else
                     parameters.ValidateAudience = true;
-                    parameters.ValidAudience = AuthOptions.AUDIENCE;
 #endif
 
                     options.TokenValidationParameters = parameters;
@@ -104,6 +106,7 @@ namespace IdentityApi
                 };
             });
 
+            Services.InitServices(services, Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -116,6 +119,10 @@ namespace IdentityApi
 
             app.UseDefaultFiles();
             app.UseAuthentication();
+
+            app.UseHangfireDashboard();
+            app.UseHangfireServer();
+
             app.UseStaticFiles();
             app.UseCors("AllowAll");
             app.UseMvc();

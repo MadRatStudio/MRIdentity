@@ -35,6 +35,8 @@ namespace IdentityApi.Helper
             CreateMap<UserTel, UserDataTel>()
                 .ForMember(x => x.CreatedTime, opt => opt.ResolveUsing(z => z.CreatedTime.ToLocalTime()));
 
+            CreateMap<AppUser, UserDisplayModel>();
+            CreateMap<UserTel, UserTelDisplayModel>();
 
             // provider models
             CreateMap<ProviderCategory, ProviderCategoryDisplayModel>();

@@ -1,4 +1,6 @@
-﻿using MRDb.Domain;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using MRDb.Domain;
 using MRDb.Infrastructure.Interface;
 using MRDbIdentity.Domain;
 using System;
@@ -9,6 +11,9 @@ namespace Infrastructure.Entities
 {
     public class AppUser : User, IEntity
     {
+        [BsonRepresentation(BsonType.String)]
+        public UserStatus Status { get; set; }
+
         public List<UserSocial> Socials { get; set; } = new List<UserSocial>();
         public List<AppUserProvider> ConnectedProviders { get; set; } = new List<AppUserProvider>();
     }
@@ -34,4 +39,14 @@ namespace Infrastructure.Entities
         public string UserAgent { get; set; }
         public DateTime UpdatedTime { get; set; }
     }
+
+    public enum UserStatus
+    {
+        Invited,
+        PendingApprove,
+        Active,
+        Blocked
+    }
+
+
 }
