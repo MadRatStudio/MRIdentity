@@ -6,7 +6,7 @@ namespace Manager.Options
 {
     public static class LoginOptions
     {
-        public const string SERVICE_LOGIN_PROVIDER = "ZB_SERVICE";
-        public const string SERVICE_LOGIN_DISPLAY = "ZB service";
+        public const string SERVICE_LOGIN_PROVIDER = "IDENTITY_MAD_RAT";
+        public const string SERVICE_LOGIN_DISPLAY = "Identity Mad Rat";
     }
 }
