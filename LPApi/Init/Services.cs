@@ -2,6 +2,7 @@
 using Hangfire.Mongo;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,10 +25,14 @@ namespace IdentityApi.Init
 
         private static void ConfigurateServices(IServiceCollection services, IConfiguration configuration)
         {
+            var provider = services.BuildServiceProvider();
 
-            var backgroundJob = services.BuildServiceProvider().GetRequiredService<IBackgroundJobClient>();
-             
-            backgroundJob.Schedule(() => Console.WriteLine("Hello"), TimeSpan.FromMinutes(1));
+            var backgroundJob = provider.GetRequiredService<IBackgroundJobClient>();
+
+            var emailService = provider.GetRequiredService<EmailMadRatBotService>();
+
+            backgroundJob
+                .Schedule(() => emailService.SendEmails().Wait(), emailService.Schedule);
         }
     }
 }

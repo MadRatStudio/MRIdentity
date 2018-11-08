@@ -1,6 +1,7 @@
 ﻿using Amazon;
 using Dal;
 using Infrastructure.Entities;
+using Infrastructure.System.Options;
 using Manager;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +11,7 @@ using MongoDB.Driver;
 using MRDbIdentity.Domain;
 using MRDbIdentity.Infrastructure.Interface;
 using MRDbIdentity.Service;
+using Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,6 +56,15 @@ namespace IdentityApi.Init
                 .AddClasses(true)
                 .AsSelf()
                 .WithTransientLifetime());
+
+            // services
+            services.Scan(x =>
+                x.FromAssemblyOf<EmailMadRatBotService>()
+                .AddClasses(c => c.Where(z => !ignoreRepos.Contains(z)))
+                .AsSelf().WithTransientLifetime());
+
+            // email settings
+            services.Configure<EmailConfigurationMadRatBot>(configuration.GetSection("Email").GetSection("MadRatBot"));
 
             /*
             services.AddTransient<LanguageRepository>();

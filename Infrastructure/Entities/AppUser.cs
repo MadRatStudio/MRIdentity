@@ -30,6 +30,7 @@ namespace Infrastructure.Entities
         public string ProviderId { get; set; }
         public string ProviderName { get; set; }
         public DateTime UpdatedTime { get; set; }
+        public List<ProviderRole> Roles { get; set; } = new List<ProviderRole>();
         public List<AppUserProviderMeta> Metadata { get; set; } = new List<AppUserProviderMeta>();
     }
 
@@ -47,6 +48,4 @@ namespace Infrastructure.Entities
         Active,
         Blocked
     }
-
-
 }

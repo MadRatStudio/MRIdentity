@@ -15,18 +15,22 @@ namespace Infrastructure.Entities
 
         public ProviderOwner Owner { get; set; }
 
+        // login 
+
         public bool IsVisible { get; set; }
+        public bool IsLoginEnabled { get; set; }
+        public string DisabledMessage { get; set; }
+        public List<ProviderRole> Roles { get; set; }
 
-        public bool IsDisabled { get; set; }
-        public string DisableMessage { get; set; }
+        // end login
 
-        // server info
+        // service info
 
         public string HomePage { get; set; }
         public string LoginRedirectUrl { get; set; }
         public List<ProviderFingerprint> Fingerprints { get; set; }
 
-        // end server info
+        // end service info
 
         public List<ProviderTranslation> Translations { get; set; }
         public List<ProviderSocial> Socials { get; set; }
@@ -44,6 +48,13 @@ namespace Infrastructure.Entities
         public string Domain { get; set; }
         public string Fingerprint { get; set; }
         public DateTime FingerprintUpdateTime { get; set; }
+    }
+
+    public class ProviderRole
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public bool IsDefault { get; set; }
     }
 
     public class ProviderOwner

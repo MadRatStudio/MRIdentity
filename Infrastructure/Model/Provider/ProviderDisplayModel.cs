@@ -10,14 +10,14 @@ namespace Infrastructure.Model.Provider
 {
     public class ProviderDisplayModel : ProviderShortDisplayModel
     {
-        public string DisplayName { get; set; }
-        public string DisableMessage { get; set; }
-        public string Description { get; set; }
-
+        public string DisabledMessage { get; set; }
         public string LoginRedirectUrl { get; set; }
 
         public ImageModel Background { get; set; }
         public List<ProviderSocialDisplayModel> Socials { get; set; }
+
+        public string DisplayName { get; set; }
+        public string Description { get; set; }
         public string KeyWords { get; set; }
     }
 

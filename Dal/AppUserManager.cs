@@ -23,12 +23,5 @@ namespace Dal
             var manager = new AppUserManager(new UserRepository<AppUser>(database, new RoleRepository(database)), null, new PasswordHasher<AppUser>(), null, null, new UpperInvariantLookupNormalizer(), null, null, new LoggerFactory().CreateLogger<AppUserManager>());
             return manager;
         }
-
-        public Task AddToRolesAsync(KeyValuePair<string, User> user, object select)
-        {
-            throw new NotImplementedException();
-        }
-
-
     }
 }

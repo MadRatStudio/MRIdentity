@@ -21,9 +21,9 @@ namespace Infrastructure.Model.Provider
         public bool IsVisible { get; set; }
 
         [Required]
-        public bool IsDisabled { get; set; }
+        public bool IsLoginEnabled { get; set; }
 
-        public string DisableMessage { get; set; }
+        public string DisabledMessage { get; set; }
 
         [Required]
         public ImageModel Avatar { get; set; }

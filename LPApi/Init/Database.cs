@@ -1,5 +1,7 @@
 ﻿using Dal;
+using Dal.Tasks;
 using Infrastructure.Entities;
+using Infrastructure.Entities.Tasks;
 using Infrastructure.Model.Common;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -60,17 +62,32 @@ namespace IdentityApi.Init
             }
         };
 
+        private static List<EmailSendTask> EmailsOnStart = new List<EmailSendTask>
+        {
+            new EmailSendTask
+            {
+                Bot = EmailTaskBot.MadRatBot,
+                Body = $"Service started at {DateTime.Now}",
+                Status = EmailSendStatus.New,
+                Subject = "Identity startup",
+                ToEmail = "oleg.timofeev20@gmail.com",
+                State = true
+            }
+        };
+
         const string LANGUAGES_FILE = "Data/LanguageCodes.json";
 
         public static async Task Seed(IServiceProvider service)
         {
             Console.WriteLine($"Start seed database");
 
-            Console.WriteLine("\n");
             await SeedUsers(service);
-
             Console.WriteLine("\n");
+
             await SeedLanguages(service);
+            Console.WriteLine("\n");
+
+            await SendEmails(service);
 
             Console.WriteLine($"Seed database finished");
         }
@@ -202,6 +219,13 @@ namespace IdentityApi.Init
             Console.WriteLine($"Update languages: {languagesToUpdate.Count}");
             Console.WriteLine($"Added languages: {languagesToAdd.Count}");
             Console.WriteLine($"Deleted languages: {languagesToDelete.Count}");
+        }
+
+        private static async Task SendEmails(IServiceProvider service)
+        {
+            Console.WriteLine("Setup emails to send");
+            var repo = service.GetRequiredService<EmailSendTaskRepository>();
+            await repo.Insert(EmailsOnStart);
         }
     }
 }

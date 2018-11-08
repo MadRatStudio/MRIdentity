@@ -35,7 +35,7 @@ namespace Manager
             if (provider == null)
                 return Fail(ECollection.PROVIDER_NOT_FOUND);
 
-            if (provider.IsDisabled)
+            if (!provider.IsLoginEnabled)
                 return Fail(ECollection.PROVIDER_UNAVALIABLE);
 
             UpdateResult updateResult;
@@ -74,7 +74,7 @@ namespace Manager
             if (provider == null)
                 return Fail(ECollection.PROVIDER_NOT_FOUND);
 
-            if (provider.IsDisabled)
+            if (!provider.IsLoginEnabled)
                 return Fail(ECollection.PROVIDER_UNAVALIABLE);
 
             UpdateResult updateResult = null;
