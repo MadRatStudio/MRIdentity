@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using CommonApi.Errors;
+using CommonApi.Identity;
 using CommonApi.Resopnse;
 using Dal;
 using Infrastructure.Entities;
 using Infrastructure.Model.User;
+using Manager.Options;
 using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 
 namespace Manager
@@ -26,10 +31,10 @@ namespace Manager
             _providerRepository = providerRepository;
         }
 
-        public async Task<ApiResponse> ProviderLoginEmail(HttpContext context, UserProviderEmailLogin model)
+        public async Task<ApiResponse<string>> ProviderLoginEmail(HttpContext context, UserProviderEmailLogin model)
         {
-            var entity = await _appUserManager.FindByEmailAsync(model.Email);
-            if (entity == null || !(await _appUserManager.CheckPasswordAsync(entity, model.Password))) return Fail(ECollection.USER_NOT_FOUND);
+            var user = await _appUserManager.FindByEmailAsync(model.Email);
+            if (user == null || !(await _appUserManager.CheckPasswordAsync(user, model.Password))) return Fail(ECollection.USER_NOT_FOUND);
 
             var provider = await _providerRepository.GetFirst(x => x.Id == model.ProviderId && x.State);
             if (provider == null)
@@ -40,10 +45,10 @@ namespace Manager
 
             UpdateResult updateResult;
 
-            var connectedProvider = await _appUserRepository.GetProvider(entity.Id, model.ProviderId);
+            var connectedProvider = await _appUserRepository.GetProvider(user.Id, model.ProviderId);
             if (connectedProvider != null)
             {
-                updateResult = await _appUserRepository.AddProviderMeta(entity.Id, provider.Name, _createMeta(context));
+                updateResult = await _appUserRepository.AddProviderMeta(user.Id, provider.Name, _createMeta(context));
             }
             else
             {
@@ -55,13 +60,16 @@ namespace Manager
                     UpdatedTime = DateTime.UtcNow
                 };
 
-                updateResult = await _appUserRepository.AddProvider(entity.Id, connectedProvider);
+                updateResult = await _appUserRepository.AddProvider(user.Id, connectedProvider);
             }
 
-            if (updateResult.ModifiedCount == 1)
-                return Ok();
+            if (updateResult.ModifiedCount != 1)
+            {
+                return Fail(ECollection.UNDEFINED_ERROR);
+            }
 
-            return Fail(ECollection.UNDEFINED_ERROR);
+
+            return Ok(_createShortLiveToken(user, provider));
         }
 
         public async Task<ApiResponse> ProviderLoginInstant(HttpContext context, string providerId)
@@ -118,6 +126,33 @@ namespace Manager
                 UserAgent = userAgent,
                 UpdatedTime = DateTime.UtcNow
             };
+        }
+
+        protected string _createShortLiveToken(AppUser user, Provider provider)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(MRClaims.ID, user.Id),
+                new Claim(MRClaims.EMAIL, user.Email),
+                new Claim(MRClaims.PROVIDER_ID, provider.Id),
+            };
+
+            ClaimsIdentity identity = new ClaimsIdentity(claims, "Token", MRClaims.EMAIL, MRClaims.PROVIDER_ID);
+
+            var now = DateTime.UtcNow;
+            var expires = now.AddMinutes(5);
+
+            var jwt = new JwtSecurityToken(
+                issuer: AuthOptions.ISSUER,
+                audience: AuthOptions.AUDIENCE,
+                notBefore: now,
+                expires: expires,
+                claims: identity.Claims,
+                signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+
+
+            var encoded = new JwtSecurityTokenHandler().WriteToken(jwt);
+            return encoded;
         }
     }
 }

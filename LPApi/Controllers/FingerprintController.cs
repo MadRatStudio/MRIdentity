@@ -4,6 +4,7 @@ using Infrastructure.Model.Provider;
 using Manager;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace IdentityApi.Controllers
     {
         protected ProviderManager _providerManager;
 
-        public FingerprintController(ProviderManager providerManager)
+        public FingerprintController(ILoggerFactory loggerFactory, ProviderManager providerManager) : base(loggerFactory)
         {
             _providerManager = providerManager;
         }

@@ -4,6 +4,7 @@ using Infrastructure.Model.Provider;
 using Manager;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace IdentityApi.Controllers
     {
         protected readonly ProviderManager _providerManager;
 
-        public ProviderController(ProviderManager providerManager)
+        public ProviderController(ILoggerFactory loggerFactory, ProviderManager providerManager) : base(loggerFactory)
         {
             _providerManager = providerManager;
         }
@@ -39,6 +40,8 @@ namespace IdentityApi.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Get(string slug, [FromQuery] string languageCode = null)
         {
+            _logger.LogError("Log Error");
+            _logger.LogInformation("Some info");
             return Ok(await _providerManager.GetToDisplay(slug, languageCode));
         }
 

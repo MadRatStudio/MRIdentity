@@ -3,6 +3,7 @@ using Infrastructure.Model.User;
 using Manager;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace IdentityApi.Controllers
     {
         protected AccountManager _accountManager;
 
-        public AccountController(AccountManager accountManager)
+        public AccountController(ILoggerFactory loggerFactory, AccountManager accountManager) : base(loggerFactory)
         {
             _accountManager = accountManager;
         }

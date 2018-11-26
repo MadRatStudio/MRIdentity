@@ -2,6 +2,7 @@
 using CommonApi.Resopnse;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,13 @@ namespace IdentityApi.Controllers
 {
     public class BaseController : Controller
     {
+        protected ILogger _logger;
+
+        public BaseController(ILoggerFactory loggerFactory)
+        {
+            _logger = loggerFactory.CreateLogger(GetType());
+        }
+
         protected IActionResult BadModelResponse(ModelStateDictionary pairs)
         {
             ApiResponse response = new ApiResponse

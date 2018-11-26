@@ -30,6 +30,9 @@ using System.Linq;
 using System.Security.Claims;
 using Infrastructure.System.Options;
 using Hangfire.Dashboard;
+using Microsoft.Extensions.Logging;
+using NLog.Web;
+using NLog.Extensions.Logging;
 
 namespace IdentityApi
 {
@@ -116,12 +119,15 @@ namespace IdentityApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            loggerFactory.AddNLog();
+            env.ConfigureNLog("nlog.config");
 
             app.UseDefaultFiles();
             app.UseAuthentication();

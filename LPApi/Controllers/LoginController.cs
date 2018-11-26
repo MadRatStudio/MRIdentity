@@ -2,6 +2,7 @@
 using Manager;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace IdentityApi.Controllers
     {
         protected readonly LoginManager _loginManager;
 
-        public LoginController(LoginManager loginManager)
+        public LoginController(ILoggerFactory loggerFactory, LoginManager loginManager) : base(loggerFactory)
         {
             _loginManager = loginManager;
         }
