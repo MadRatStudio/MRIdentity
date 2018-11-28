@@ -53,13 +53,16 @@ namespace IdentityApi.Helper
             CreateMap<Provider, ProviderUpdateModel>();
             CreateMap<ProviderTranslation, ProviderTranslationUpdateModel>();
             CreateMap<ProviderSocial, ProviderSocialUpdateModel>();
-
+            
             // provider fingerprint
             CreateMap<ProviderFingerprint, ProviderFingerprintDisplayModel>()
                 .ForMember(x => x.FingerprintUpdateTime, t => t.ResolveUsing(x => x.FingerprintUpdateTime.ToLocalTime()));
             CreateMap<ProviderFingerprintCreateModel, ProviderFingerprint>()
                 .ForMember(x => x.FingerprintUpdateTime, t => t.ResolveUsing(x => DateTime.UtcNow));
 
+            // provider roles
+            CreateMap<ProviderRole, ProviderRoleDisplayModel>();
+            CreateMap<ProviderRoleCreateModel, ProviderRole>();
 
             // provider tag
             CreateMap<ProviderTag, ProviderTagDisplayModel>();

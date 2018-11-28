@@ -1,4 +1,5 @@
-﻿using MRDb.Domain;
+﻿using MongoDB.Bson;
+using MRDb.Domain;
 using MRDb.Infrastructure.Interface;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -52,7 +53,7 @@ namespace Infrastructure.Entities
 
     public class ProviderRole
     {
-        public string Id { get; set; }
+        public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
         public string Name { get; set; }
         public bool IsDefault { get; set; }
     }

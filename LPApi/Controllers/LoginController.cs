@@ -35,6 +35,13 @@ namespace IdentityApi.Controllers
             return Ok(await _loginManager.ProviderLoginEmail(HttpContext, model));
         }
 
+        [HttpPut]
+        [Route("provider/approve")]
+        public async Task<IActionResult> LoginApprove([FromQuery] string token, [FromQuery] string fingerprint)
+        {
+            return Ok(await _loginManager.ProviderApproveLogin(HttpContext, token, fingerprint));
+        }
+
         /// <summary>
         /// Instant login from your account to target provider
         /// </summary>

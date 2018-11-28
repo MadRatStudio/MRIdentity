@@ -1,0 +1,42 @@
+2018-11-28 22:15:05.4686 Info Message Template Auto Format enabled
+2018-11-28 22:15:05.4822 Info Loading assembly: NLog.Web.AspNetCore
+2018-11-28 22:15:05.5547 Info Adding target File Target[allFile]
+2018-11-28 22:15:05.5547 Info Adding target File Target[errorFile]
+2018-11-28 22:15:05.5672 Info Configured from an XML element in D:\projects\MadRat\auth.madrat.studio\Api\LPApi\nlog.config...
+2018-11-28 22:15:05.5883 Info Found 53 configuration items
+2018-11-28 22:33:31.2883 Info Message Template Auto Format enabled
+2018-11-28 22:33:31.2977 Info Loading assembly: NLog.Web.AspNetCore
+2018-11-28 22:33:31.3614 Info Adding target File Target[allFile]
+2018-11-28 22:33:31.3614 Info Adding target File Target[errorFile]
+2018-11-28 22:33:31.3614 Info Configured from an XML element in D:\projects\MadRat\auth.madrat.studio\Api\LPApi\nlog.config...
+2018-11-28 22:33:31.3867 Info Found 53 configuration items
+2018-11-28 22:44:33.4109 Info Message Template Auto Format enabled
+2018-11-28 22:44:33.4204 Info Loading assembly: NLog.Web.AspNetCore
+2018-11-28 22:44:33.4912 Info Adding target File Target[allFile]
+2018-11-28 22:44:33.4912 Info Adding target File Target[errorFile]
+2018-11-28 22:44:33.5021 Info Configured from an XML element in D:\projects\MadRat\auth.madrat.studio\Api\LPApi\nlog.config...
+2018-11-28 22:44:33.5219 Info Found 53 configuration items
+2018-11-28 22:58:50.0649 Info Message Template Auto Format enabled
+2018-11-28 22:58:50.0735 Info Loading assembly: NLog.Web.AspNetCore
+2018-11-28 22:58:50.1259 Info Adding target File Target[allFile]
+2018-11-28 22:58:50.1259 Info Adding target File Target[errorFile]
+2018-11-28 22:58:50.1387 Info Configured from an XML element in D:\projects\MadRat\auth.madrat.studio\Api\LPApi\nlog.config...
+2018-11-28 22:58:50.1549 Info Found 53 configuration items
+2018-11-28 23:00:29.8471 Info Message Template Auto Format enabled
+2018-11-28 23:00:29.8585 Info Loading assembly: NLog.Web.AspNetCore
+2018-11-28 23:00:29.9148 Info Adding target File Target[allFile]
+2018-11-28 23:00:29.9148 Info Adding target File Target[errorFile]
+2018-11-28 23:00:29.9250 Info Configured from an XML element in D:\projects\MadRat\auth.madrat.studio\Api\LPApi\nlog.config...
+2018-11-28 23:00:29.9430 Info Found 53 configuration items
+2018-11-28 23:01:10.9403 Info Message Template Auto Format enabled
+2018-11-28 23:01:10.9403 Info Loading assembly: NLog.Web.AspNetCore
+2018-11-28 23:01:11.0324 Info Adding target File Target[allFile]
+2018-11-28 23:01:11.0324 Info Adding target File Target[errorFile]
+2018-11-28 23:01:11.0324 Info Configured from an XML element in D:\projects\MadRat\auth.madrat.studio\Api\LPApi\nlog.config...
+2018-11-28 23:01:11.0585 Info Found 53 configuration items
+2018-11-28 23:05:35.0180 Info Message Template Auto Format enabled
+2018-11-28 23:05:35.0306 Info Loading assembly: NLog.Web.AspNetCore
+2018-11-28 23:05:35.1135 Info Adding target File Target[allFile]
+2018-11-28 23:05:35.1135 Info Adding target File Target[errorFile]
+2018-11-28 23:05:35.1247 Info Configured from an XML element in D:\projects\MadRat\auth.madrat.studio\Api\LPApi\nlog.config...
+2018-11-28 23:05:35.1423 Info Found 53 configuration items

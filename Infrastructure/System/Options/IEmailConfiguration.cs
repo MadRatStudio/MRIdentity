@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Infrastructure.System.Options
+﻿namespace Infrastructure.System.Options
 {
     public abstract class IEmailConfiguration
     {

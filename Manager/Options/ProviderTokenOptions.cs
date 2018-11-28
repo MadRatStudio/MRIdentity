@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Manager.Options
+﻿namespace Manager.Options
 {
     public static class ProviderTokenOptions
     {

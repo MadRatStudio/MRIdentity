@@ -93,6 +93,53 @@ namespace CommonApi.Errors
             UserMessage = "Can not upload image"
         };
 
+        public static ApiError PROPERTY_REQUIRED = new ApiError
+        {
+            Code = 205,
+            Message = "Propery required",
+            UserMessage = "Property required"
+        };
+
+
+        // token validation failed
+
+        public static ApiError TOKEN_VALIDATION_FAILED = new ApiError
+        {
+            Code = 300,
+            Message = "Token validation failed",
+            UserMessage = "Token validation failed"
+        };
+
+        public static ApiError TOKEN_CHALLENGE_FAILED = new ApiError
+        {
+            Code = 301,
+            Message = "Token challenge failed",
+            UserMessage = "Token challenge failed"
+        };
+
+        public static ApiError TOKEN_PROVIDER_NOT_ALLOWED = new ApiError
+        {
+            Code = 302,
+            Message = "Provider not allowed",
+            UserMessage = "Provider do not allow login"
+        };
+
+        public static ApiError TOKEN_PROVIDER_NOT_FOUND = new ApiError
+        {
+            Code = 303,
+            Message = "Provider not found",
+            UserMessage = "Provider do not found"
+        };
+
+        // provider action errors
+
+        public static ApiError USER_ALREADY_CONNECTED = new ApiError
+        {
+            Code = 400,
+            Message = "User already connected",
+            UserMessage = "User already connected to target provider"
+        };
+
         // undefined error
 
         public static ApiError UNDEFINED_ERROR = new ApiError
