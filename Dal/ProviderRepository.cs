@@ -89,8 +89,7 @@ namespace Dal
         public async Task<bool> InsertRoleBySlug(string slug, ProviderRole role)
         {
             var query = _getSlugQuery(slug)
-                .Update(z => z.AddToSet(x => x.Roles, role))
-                .Update(x => x.Set(z => z.UpdatedTime, DateTime.UtcNow));
+                .Update(z => z.AddToSet(x => x.Roles, role).Set(x => x.UpdatedTime, DateTime.UtcNow));
 
             return (await _collection.UpdateOneAsync(query.FilterDefinition, query.UpdateDefinition)).MatchedCount == 1;
         }

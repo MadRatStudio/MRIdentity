@@ -13,6 +13,18 @@ namespace Dal.Tasks
     {
         public EmailSendTaskRepository(IMongoDatabase mongoDatabase) : base(mongoDatabase) { }
 
+        public async Task InsertEmail(string toEmail, string subject, string body, EmailTaskBot bot)
+        {
+            await Insert(new EmailSendTask
+            {
+                Bot = bot,
+                Status = EmailSendStatus.New,
+                Subject = subject,
+                ToEmail = toEmail,
+                Body = body
+            });
+        }
+
         public async Task<ICollection<EmailSendTask>> GetByStatus(EmailSendStatus status, int? limit = null)
         {
             var query = DbQuery

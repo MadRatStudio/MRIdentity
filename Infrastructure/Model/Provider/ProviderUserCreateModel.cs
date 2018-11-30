@@ -19,6 +19,9 @@ namespace Infrastructure.Model.Provider
         [Required]
         public string LastName { get; set; }
 
+        /// <summary>
+        /// User role names
+        /// </summary>
         [Required]
         public List<string> Roles { get; set; }
     }
@@ -31,6 +34,9 @@ namespace Infrastructure.Model.Provider
         [Required]
         public string UserId { get; set; }
 
+        /// <summary>
+        /// User role names
+        /// </summary>
         [Required]
         public List<string> Roles { get; set; }
     }

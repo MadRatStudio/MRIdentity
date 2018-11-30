@@ -19,6 +19,7 @@ namespace IdentityApi.Controllers
             _logger = loggerFactory.CreateLogger(GetType());
         }
 
+        protected IActionResult BadModelResponse() => BadModelResponse(ModelState);
         protected IActionResult BadModelResponse(ModelStateDictionary pairs)
         {
             ApiResponse response = new ApiResponse

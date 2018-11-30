@@ -13,9 +13,7 @@ namespace Dal
 {
     public class AppUserRepository : UserRepository<AppUser>
     {
-        public AppUserRepository(IMongoDatabase mongoDatabase, IRoleRepository roleRepository) : base(mongoDatabase, roleRepository)
-        {
-        }
+        public AppUserRepository(IMongoDatabase mongoDatabase, IRoleRepository roleRepository) : base(mongoDatabase, roleRepository) { }
 
         public async Task<ICollection<AppUser>> Get(int skip, int limit, string q)
         {
@@ -47,6 +45,22 @@ namespace Dal
             return await GetFirst(query);
         }
 
+        #region Provider
+
+        public async Task<ICollection<AppUser>> GetByProvider(int skip, int limit, string providerId)
+        {
+            var q = DbQuery.CustomSearch(z => z.And(
+                z.Eq(x => x.State, true),
+                z.Eq(x => x.IsBlocked, false),
+                z.ElemMatch(x => x.ConnectedProviders, x => x.ProviderId == providerId)))
+                .Descending(x => x.UpdatedTime);
+
+            q.Limit = limit;
+            q.Skip = skip;
+
+            return await Get(q);
+        }
+
         public async Task<AppUserProvider> GetProvider(string id, string providerId)
         {
             var q = DbQuery
@@ -67,6 +81,17 @@ namespace Dal
             return await Update(query);
         }
 
+        public async Task<UpdateResult> UpdateProviderRoles(string id, string providerId, List<ProviderRole> roles)
+        {
+            var query = DbQuery.CustomSearch(z => z.And(
+                z.Eq(x => x.Id, id),
+                z.Eq(x => x.State, true),
+                z.ElemMatch(x => x.ConnectedProviders, x => x.ProviderId == providerId)))
+                .Update(x => x.Set(z => z.ConnectedProviders.First().Roles, roles));
+
+            return await _collection.UpdateOneAsync(query.FilterDefinition, query.UpdateDefinition);
+        }
+
         public async Task<UpdateResult> AddProviderMeta(string id, string providerId, AppUserProviderMeta meta)
         {
             var query = DbQuery.CustomSearch(x => x.And(
@@ -79,6 +104,8 @@ namespace Dal
 
             return await Update(query);
         }
+
+        #endregion Provider
 
         protected Expression<Func<ProjectionDefinitionBuilder<AppUser>, ProjectionDefinition<AppUser>>> _shortUserProjection =>
             x => x

@@ -2,18 +2,68 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CommonApi.Resopnse;
+using Infrastructure.Model.Provider;
+using Manager;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace IdentityApi.Controllers
 {
     [Authorize]
+    [Route("provider_role")]
     public class ProviderRoleController : BaseController
     {
-        public ProviderRoleController(ILoggerFactory loggerFactory) : base(loggerFactory)
+        protected readonly ProviderRoleManager _providerRoleManager;
+
+        public ProviderRoleController(ILoggerFactory loggerFactory, ProviderRoleManager providerRoleManager) : base(loggerFactory)
         {
+            _providerRoleManager = providerRoleManager;
         }
 
+        /// <summary>
+        /// List of roles for target provider
+        /// </summary>
+        /// <param name="slug">Slug of provider</param>
+        /// <returns>List provider role display model</returns>
+        [HttpGet]
+        [Route("list/{slug}")]
+        [ProducesResponseType(200, Type = typeof(ApiResponse<List<ProviderRoleDisplayModel>>))]
+        public async Task<IActionResult> Get(string slug)
+        {
+            return Ok(await _providerRoleManager.GetProviderRoles(slug));
+        }
 
+        /// <summary>
+        /// Add new role to provider
+        /// </summary>
+        /// <param name="slug">Slug of provider</param>
+        /// <param name="model">Create role model</param>
+        /// <returns>Role display model</returns>
+        [HttpPut]
+        [Route("{slug}")]
+        [ProducesResponseType(200, Type = typeof(ApiResponse<ProviderRoleDisplayModel>))]
+        public async Task<IActionResult> Create(string slug, [FromBody] ProviderRoleCreateModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadModelResponse(ModelState);
+
+            return Ok(await _providerRoleManager.CreateProviderRole(slug, model));
+        }
+
+        /// <summary>
+        /// Delete role from provider
+        /// </summary>
+        /// <param name="slug">Slug of provider</param>
+        /// <param name="name">Name of deleting role</param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("{slug}/{name}")]
+        [ProducesResponseType(200, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> Delete(string slug, string name)
+        {
+            return Ok(await _providerRoleManager.RemoveProviderRole(slug, name));
+        }
     }
 }

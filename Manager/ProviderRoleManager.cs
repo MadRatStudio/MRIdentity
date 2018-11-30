@@ -37,7 +37,7 @@ namespace Manager
 
             slug = slug.ToLower();
 
-            if (!await _providerRepository.ExistsWithOwner(slug, (await GetCurrentUser())?.Id))
+            if (!await _providerRepository.ExistsWithOwnerSlug(slug, (await GetCurrentUser())?.Id))
                 return Fail(ECollection.ACCESS_DENIED);
 
             var result = (await _providerRepository.GetRolesBySlug(slug))?.Select(x => _mapper.Map<ProviderRoleDisplayModel>(x)).ToList() ?? new List<ProviderRoleDisplayModel>();
@@ -54,7 +54,7 @@ namespace Manager
 
             slug = slug.ToLower();
 
-            if (!await _providerRepository.ExistsWithOwner(slug, (await GetCurrentUser())?.Id))
+            if (!await _providerRepository.ExistsWithOwnerSlug(slug, (await GetCurrentUser())?.Id))
                 return Fail(ECollection.ACCESS_DENIED);
 
             model.Name = model.Name.ToUpper();
@@ -75,7 +75,7 @@ namespace Manager
 
             slug = slug.ToLower();
 
-            if (!await _providerRepository.ExistsWithOwner(slug, (await GetCurrentUser())?.Id))
+            if (!await _providerRepository.ExistsWithOwnerSlug(slug, (await GetCurrentUser())?.Id))
                 return Fail(ECollection.ACCESS_DENIED);
 
             name = name.ToUpper();

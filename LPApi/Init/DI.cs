@@ -1,6 +1,7 @@
 ﻿using Amazon;
 using Dal;
 using Infrastructure.Entities;
+using Infrastructure.System.Appsettings;
 using Infrastructure.System.Options;
 using Manager;
 using Microsoft.AspNetCore.Http;
@@ -16,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Tools;
 
 namespace IdentityApi.Init
 {
@@ -23,8 +25,14 @@ namespace IdentityApi.Init
     {
         public static void AddDependencies(IServiceCollection services, IConfiguration configuration)
         {
-            // new dependency
 
+            // options
+            TemplateSettings tSettings = new TemplateSettings();
+            configuration.GetSection("Templates").Bind(tSettings);
+            services.AddSingleton(tSettings);
+
+            // tools
+            services.AddTransient<TemplateParser>();
 
             // Identity Services
             services.AddTransient<IUserStore<AppUser>, UserRepository<AppUser>>();
