@@ -37,6 +37,26 @@ namespace Dal
             return await Get(query);
         }
 
+        public async Task<ICollection<AppUser>> GetShortById(IEnumerable<string> ids)
+        {
+            var q = DbQuery.CustomSearch(x => x.And(
+                x.Eq(z => z.State, true),
+                x.In(z => z.Id, ids)))
+                .Projection(_shortUserProjection);
+
+            return await _collection.Find(q.FilterDefinition).Project<AppUser>(q.ProjectionDefinition).ToListAsync();
+        }
+
+        public async Task<AppUser> GetShortById(string id)
+        {
+            var q = DbQuery.CustomSearch(x => x.And(
+                x.Eq(z => z.State, true),
+                x.Eq(z => z.Id, id)))
+                .Projection(_shortUserProjection);
+
+            return await _collection.Find(q.FilterDefinition).Project<AppUser>(q.ProjectionDefinition).FirstOrDefaultAsync();
+        }
+
         public async Task<AppUser> GetByIdAdmin(string id)
         {
             var query = DbQuery.CustomSearch(x => x.Eq(z => z.Id, id));
@@ -119,6 +139,7 @@ namespace Dal
                 .Include(z => z.IsEmailConfirmed)
                 .Include(z => z.LastName)
                 .Include(z => z.UpdatedTime)
+                .Include(z => z.Status)
                 .Include(z => z.UserName);
 
         protected Expression<Func<ProjectionDefinitionBuilder<AppUser>, ProjectionDefinition<AppUser>>> _fullUserProjection => x =>

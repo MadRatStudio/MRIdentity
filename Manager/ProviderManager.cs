@@ -15,7 +15,9 @@ using Infrastructure.Entities;
 using Infrastructure.Model.Provider;
 using Manager.Options;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Tools;
 
 namespace Manager
 {
@@ -28,9 +30,9 @@ namespace Manager
         protected readonly ImageOriginBucket _imageOriginBucket;
 
 
-        public ProviderManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper,
+        public ProviderManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper, ILoggerFactory loggerFactory,
             ProviderRepository providerRepository, ProviderCategoryRepository providerCategoryRepository, ProviderTagRepository providerTagRepository,
-            ImageTmpBucket imageTmpBucket, ImageOriginBucket imageOriginBucket) : base(httpContextAccessor, appUserManager, mapper)
+            ImageTmpBucket imageTmpBucket, ImageOriginBucket imageOriginBucket) : base(httpContextAccessor, appUserManager, mapper, loggerFactory)
         {
             _providerRepository = providerRepository;
             _providerTagRepository = providerTagRepository;
@@ -146,7 +148,7 @@ namespace Manager
 
             var fingerprint = _mapper.Map<ProviderFingerprint>(model);
 
-            fingerprint.Fingerprint = _generateFingerprint(entity, fingerprint);
+            fingerprint.Fingerprint = FingerprintGenerator.Generate();
             fingerprint.FingerprintUpdateTime = DateTime.UtcNow;
 
             entity.Fingerprints.Add(fingerprint);

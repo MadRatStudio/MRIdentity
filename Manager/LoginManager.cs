@@ -20,6 +20,7 @@ using Infrastructure.System.Options;
 using Manager.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 
@@ -32,8 +33,8 @@ namespace Manager
 
         protected readonly Regex QMARK_REGEX = new Regex("[?]");
 
-        public LoginManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper,
-            AppUserRepository appUserRepository, ProviderRepository providerRepository) : base(httpContextAccessor, appUserManager, mapper)
+        public LoginManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper, ILoggerFactory loggerFactory,
+            AppUserRepository appUserRepository, ProviderRepository providerRepository) : base(httpContextAccessor, appUserManager, mapper, loggerFactory)
         {
             _appUserRepository = appUserRepository;
             _providerRepository = providerRepository;

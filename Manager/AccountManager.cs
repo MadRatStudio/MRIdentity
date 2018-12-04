@@ -6,6 +6,7 @@ using Infrastructure.Entities;
 using Infrastructure.Model.User;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using MRDbIdentity.Domain;
 using System;
 using System.Collections.Generic;
@@ -21,8 +22,8 @@ namespace Manager
         protected readonly ImageTmpBucket _imageTmpBucket;
         protected readonly ImageOriginBucket _imageOriginBucket;
 
-        public AccountManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper, AppUserRepository appUserRepository,
-            ImageTmpBucket imageTmpBucket, ImageOriginBucket imageOriginBucket) : base(httpContextAccessor, appUserManager, mapper)
+        public AccountManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper, ILoggerFactory loggerFactory, AppUserRepository appUserRepository,
+            ImageTmpBucket imageTmpBucket, ImageOriginBucket imageOriginBucket) : base(httpContextAccessor, appUserManager, mapper, loggerFactory)
         {
             _appUserRepository = appUserRepository;
             _imageTmpBucket = imageTmpBucket;

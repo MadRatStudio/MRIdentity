@@ -33,6 +33,7 @@ using Hangfire.Dashboard;
 using Microsoft.Extensions.Logging;
 using NLog.Web;
 using NLog.Extensions.Logging;
+using IdentityApi.Middleware;
 
 namespace IdentityApi
 {
@@ -141,6 +142,7 @@ namespace IdentityApi
 
             app.UseStaticFiles();
             app.UseCors("AllowAll");
+            app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseMvc();
 
             app.UseSwagger();

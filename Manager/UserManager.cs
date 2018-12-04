@@ -14,6 +14,7 @@ using Infrastructure.Entities;
 using Infrastructure.Model.User;
 using Manager.Options;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using MRDbIdentity.Infrastructure.Interface;
 using MRDbIdentity.Service;
@@ -24,7 +25,7 @@ namespace Manager
     {
         protected readonly AppUserRepository _appUserRepository;
 
-        public UserManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper, AppUserRepository appUserRepository) : base(httpContextAccessor, appUserManager, mapper)
+        public UserManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper, ILoggerFactory loggerFactory, AppUserRepository appUserRepository) : base(httpContextAccessor, appUserManager, mapper, loggerFactory)
         {
             _appUserRepository = appUserRepository;
         }
@@ -131,6 +132,7 @@ namespace Manager
             var claims = new List<Claim>
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, user.Email),
+                new Claim(TokenOptions.USER_ID, user.Id)
             };
 
             foreach(var role in roles)

@@ -152,6 +152,101 @@ namespace Dal
 
         #endregion Fingerprints
 
+        #region Workers
+
+        public async Task<long> UserInWorkersCount(string userId)
+        {
+            var q = DbQuery.CustomSearch(x => x.And(
+                x.Eq(z => z.State, true),
+                x.ElemMatch(z => z.Workers, z => z.UserId == userId)));
+
+            return await _collection.CountDocumentsAsync(q.FilterDefinition);
+        }
+
+        public async Task<bool> IsWorkerInRoleBySlug(string slug, string userId, ProviderWorkerRole role)
+        {
+            var filter = DbQuery.CustomSearch(z => z.And(
+                z.Eq(x => x.Slug, slug.ToLower()),
+                z.Eq(x => x.State, true),
+                z.ElemMatch(x => x.Workers, x => x.UserId == userId && x.Roles.Contains(role))));
+
+            return (await _collection.CountDocumentsAsync(filter.FilterDefinition)) == 1;
+        }
+
+        public async Task<bool> IsWorkerExistsBySlug(string slug, string userId)
+        {
+            var q = DbQuery.CustomSearch(x => x.And(
+                x.Eq(z => z.Slug, slug.ToLower()),
+                x.Eq(z => z.State, true),
+                x.ElemMatch(z => z.Workers, z => z.UserId == userId)));
+
+            return (await _collection.CountDocumentsAsync(q.FilterDefinition)) == 1;
+        }
+
+        public async Task<List<ProviderWorker>> GetWorkersBySlug(string slug)
+        {
+            var filter = _getSlugQuery(slug)
+                .Projection(x => x.Include(z => z.Workers));
+
+            return (await _collection.Find(filter.FilterDefinition).Project<Provider>(filter.ProjectionDefinition).FirstOrDefaultAsync())?.Workers ?? new List<ProviderWorker>();
+        }
+
+        public async Task<bool> InsertWorkersBySlug(string slug, ProviderWorker worker) => await InsertWorkersBySlug(slug, new List<ProviderWorker>() { worker });
+        public async Task<bool> InsertWorkersBySlug(string slug, IEnumerable<ProviderWorker> workers)
+        {
+            var q = _getSlugQuery(slug)
+                .Update(x => x.AddToSetEach(z => z.Workers, workers));
+
+            return (await _collection.UpdateOneAsync(q.FilterDefinition, q.UpdateDefinition)).ModifiedCount == 1;
+        }
+
+        public async Task<bool> InsertWorkersById(string id, IEnumerable<ProviderWorker> workers)
+        {
+            var q = _getIdQuery(id)
+                .Update(x => x.AddToSetEach(z => z.Workers, workers));
+
+            return (await _collection.UpdateOneAsync(q.FilterDefinition, q.UpdateDefinition)).ModifiedCount == 1;
+        }
+
+        public async Task<bool> RemoveWorkerBySlug(string slug, string userId)
+        {
+            var q = _getSlugQuery(slug)
+                .Update(x => x.PullFilter(z => z.Workers, z => z.UserId == userId));
+
+            return (await _collection.UpdateOneAsync(q.FilterDefinition, q.UpdateDefinition)).ModifiedCount == 1;
+        }
+
+        public async Task<bool> RemoveWorker(string id, string userId)
+        {
+            var q = _getIdQuery(id)
+                .Update(x => x.PullFilter(z => z.Workers, z => z.UserId == userId));
+
+            return (await _collection.UpdateOneAsync(q.FilterDefinition, q.UpdateDefinition)).ModifiedCount == 1;
+        }
+
+        public async Task<bool> UpdateWorkerBySlug(string slug, string userId, IEnumerable<ProviderWorkerRole> roles)
+        {
+            var q = DbQuery.CustomSearch(z => z.And(
+                z.Eq(x => x.Slug, slug),
+                z.Eq(x => x.State, true),
+                z.ElemMatch(x => x.Workers, x => x.UserId == userId)))
+                .Update(x => x.Set(z => z.Workers[0].Roles, roles));
+
+            return (await _collection.UpdateOneAsync(q.FilterDefinition, q.UpdateDefinition)).ModifiedCount == 1;
+        }
+
+        public async Task<bool> UpdateWorker(string id, string userId, IEnumerable<ProviderWorkerRole> roles)
+        {
+            var q = DbQuery.CustomSearch(z => z.And(
+                z.Eq(x => x.Id, id),
+                z.Eq(x => x.State, true),
+                z.ElemMatch(x => x.Workers, x => x.UserId == userId)))
+                .Update(x => x.Set(z => z.Workers[0].Roles, roles));
+
+            return (await _collection.UpdateOneAsync(q.FilterDefinition, q.UpdateDefinition)).ModifiedCount == 1;
+        }
+
+        #endregion Workers
 
         public async Task<bool> ExistsWithOwner(string id, string userId)
         {

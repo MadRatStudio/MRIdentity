@@ -7,6 +7,7 @@ using ConnectorS3.Domain.Upload;
 using Dal;
 using Infrastructure.Model.Common;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace Manager
             "image/gif", "image/png", "image/jpeg", "image/bmp", "image/webp"
         };
 
-        public ImageManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper, ImageTmpBucket tmpBucket, ImageOriginBucket imageOriginBucket) : base(httpContextAccessor, appUserManager, mapper)
+        public ImageManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper, ILoggerFactory loggerFactory, ImageTmpBucket tmpBucket, ImageOriginBucket imageOriginBucket) : base(httpContextAccessor, appUserManager, mapper, loggerFactory)
         {
             _tmpBucket = tmpBucket;
             _originBucket = imageOriginBucket;

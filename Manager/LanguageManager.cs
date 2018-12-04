@@ -9,6 +9,7 @@ using Dal;
 using Infrastructure.Entities;
 using Infrastructure.Model.Common;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using MRDbIdentity.Infrastructure.Interface;
 
 namespace Manager
@@ -17,8 +18,8 @@ namespace Manager
     {
         protected readonly LanguageRepository _languageRepository;
 
-        public LanguageManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper,
-            LanguageRepository languageRepository) : base(httpContextAccessor, appUserManager, mapper)
+        public LanguageManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper, ILoggerFactory loggerFactory,
+            LanguageRepository languageRepository) : base(httpContextAccessor, appUserManager, mapper, loggerFactory)
         {
             _languageRepository = languageRepository;
         }

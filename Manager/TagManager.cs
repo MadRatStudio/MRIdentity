@@ -12,6 +12,7 @@ using Dal;
 using Infrastructure.Entities;
 using Infrastructure.Model.Provider;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace Manager
 {
@@ -19,8 +20,8 @@ namespace Manager
     {
         protected readonly ProviderTagRepository _providerTagRepository;
 
-        public TagManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper,
-            ProviderTagRepository providerTagRepository) : base(httpContextAccessor, appUserManager, mapper)
+        public TagManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper, ILoggerFactory loggerFactory,
+            ProviderTagRepository providerTagRepository) : base(httpContextAccessor, appUserManager, mapper, loggerFactory)
         {
             _providerTagRepository = providerTagRepository;
         }

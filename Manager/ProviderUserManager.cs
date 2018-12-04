@@ -14,6 +14,7 @@ using Infrastructure.Model.Provider;
 using Infrastructure.Model.User;
 using Infrastructure.System.Options;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Tools;
 
 namespace Manager
@@ -25,8 +26,8 @@ namespace Manager
         protected readonly EmailSendTaskRepository _emailSendTaskRepository;
         protected readonly TemplateParser _templateParser;
 
-        public ProviderUserManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper,
-            ProviderRepository providerRepository, AppUserRepository appUserRepository, EmailSendTaskRepository emailSendTaskRepository, TemplateParser templateParser) : base(httpContextAccessor, appUserManager, mapper)
+        public ProviderUserManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper, ILoggerFactory loggerFactory,
+            ProviderRepository providerRepository, AppUserRepository appUserRepository, EmailSendTaskRepository emailSendTaskRepository, TemplateParser templateParser) : base(httpContextAccessor, appUserManager, mapper, loggerFactory)
         {
             _providerRepository = providerRepository;
             _appUserRepository = appUserRepository;

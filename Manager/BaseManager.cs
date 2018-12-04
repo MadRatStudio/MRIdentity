@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 using Infrastructure.Entities;
 using AutoMapper;
 using CommonApi.Manager;
+using Manager.Options;
+using Microsoft.Extensions.Logging;
 
 namespace Manager
 {
@@ -21,8 +23,10 @@ namespace Manager
         protected readonly AppUserManager _appUserManager;
         protected readonly IHttpContextAccessor _httpContextAccessor;
         protected readonly IMapper _mapper;
-
+        protected readonly ILogger _logger;
+        
         protected string _currentUserEmail => _httpContextAccessor.HttpContext.User?.FindFirst(ClaimsIdentity.DefaultNameClaimType)?.Value;
+        protected string _currentUserId => _httpContextAccessor.HttpContext.User?.FindFirst(TokenOptions.USER_ID)?.Value;
         protected List<string> _currentUserRoles => _httpContextAccessor.HttpContext.User?.FindAll(ClaimsIdentity.DefaultRoleClaimType)?.Select(x => x.Value).ToList() ?? new List<string>();
 
         protected AppUser _currentUser { get; set; }
@@ -42,11 +46,12 @@ namespace Manager
         protected readonly string DEFAULT_LANGUAGE_CODE = "en";
         protected readonly int MAX_LIMIT = 15;
 
-        public BaseManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper)
+        public BaseManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper, ILoggerFactory _loggerFactory)
         {
             _httpContextAccessor = httpContextAccessor;
             _appUserManager = appUserManager;
             _mapper = mapper;
+            _logger = _loggerFactory.CreateLogger(this.GetType());
         }
     }
 }

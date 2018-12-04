@@ -12,6 +12,7 @@ using Dal;
 using Infrastructure.Entities;
 using Infrastructure.Model.Provider;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace Manager
 {
@@ -20,8 +21,8 @@ namespace Manager
         protected readonly ProviderCategoryRepository _providerCategoryRepository;
         protected readonly ProviderRepository _providerRepository;
 
-        public CategoryManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper,
-            ProviderCategoryRepository providerCategoryRepository, ProviderRepository providerRepository) : base(httpContextAccessor, appUserManager, mapper)
+        public CategoryManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper, ILoggerFactory loggerFactory,
+            ProviderCategoryRepository providerCategoryRepository, ProviderRepository providerRepository) : base(httpContextAccessor, appUserManager, mapper, loggerFactory)
         {
             _providerCategoryRepository = providerCategoryRepository;
             _providerRepository = providerRepository;

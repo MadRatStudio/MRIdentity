@@ -1,10 +1,12 @@
 ﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using MRDb.Domain;
 using MRDb.Infrastructure.Interface;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Infrastructure.Entities
@@ -41,6 +43,8 @@ namespace Infrastructure.Entities
 
         public ProviderProviderCategory Category { get; set; }
         public List<ProviderProviderTag> Tags { get; set; }
+
+        public List<ProviderWorker> Workers { get; set; } = new List<ProviderWorker>();
     }
 
     public class ProviderFingerprint
@@ -95,6 +99,13 @@ namespace Infrastructure.Entities
         public string Key { get; set; }
     }
 
+    public class ProviderWorker
+    {
+        public string UserId { get; set; }
+        public string UserEmail { get; set; }
+        public List<ProviderWorkerRole> Roles { get; set; }
+    }
+
     [JsonConverter(typeof(StringEnumConverter))]
     public enum ProviderSocialType
     {
@@ -102,4 +113,24 @@ namespace Infrastructure.Entities
         Google,
         Twitter
     }
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum ProviderWorkerRole
+    {
+        [Description("User can see and create analytic reports")]
+        ANALYTICS,
+
+        [Description("User can change name, description and SEO")]
+        MANAGER,
+
+        [Description("User can edit endpoints and fingerprints")]
+        DEVELOPER,
+
+        [Description("Can manage users")]
+        USER_MANAGER,
+
+        [Description("Owns provider")]
+        OWNER
+    }
+
 }

@@ -69,6 +69,9 @@ namespace IdentityApi.Helper
             CreateMap<ProviderTagCreateModel, ProviderTag>();
             CreateMap<ProviderTagTranslationCreateModel, ProviderTagTranslation>();
 
+            // provider worker
+            CreateMap<ProviderWorker, ProviderWorkerDisplayModel>();
+            CreateMap<ProviderWorkerUpdateModel, ProviderWorker>();
 
             CreateMap<Provider, ProviderShortDisplayModel>()
                 .ForMember(x => x.Category, t => t.Ignore())
