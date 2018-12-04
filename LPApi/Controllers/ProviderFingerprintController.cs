@@ -5,20 +5,17 @@ using Manager;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace IdentityApi.Controllers
 {
-    [Route("fingerprint")]
+    [Route("provider_fingerprint")]
     [Authorize(Roles = "ADMIN, MANAGER")]
-    public class FingerprintController : BaseController
+    public class ProviderFingerprintController : BaseController
     {
         protected ProviderManager _providerManager;
 
-        public FingerprintController(ILoggerFactory loggerFactory, ProviderManager providerManager) : base(loggerFactory)
+        public ProviderFingerprintController(ILoggerFactory loggerFactory, ProviderManager providerManager) : base(loggerFactory)
         {
             _providerManager = providerManager;
         }
