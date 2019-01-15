@@ -5,9 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Amazon.S3" Version="0.11.5" />
-    <PackageReference Include="AWSSDK.Core" Version="3.3.29" />
-    <PackageReference Include="AWSSDK.S3" Version="3.3.26.2" />
+    <PackageReference Include="Amazon.S3" Version="0.12.5" />
+    <PackageReference Include="AWSSDK.Core" Version="3.3.31.2" />
+    <PackageReference Include="AWSSDK.S3" Version="3.3.31.10" />
   </ItemGroup>
 
 </Project>

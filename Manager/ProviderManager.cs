@@ -83,6 +83,23 @@ namespace Manager
             };
             entity.Tags = new List<ProviderProviderTag>();
 
+            entity.Workers = new List<ProviderWorker>
+            {
+                new ProviderWorker
+                {
+                    Roles = new List<ProviderWorkerRole>
+                    {
+                        ProviderWorkerRole.ANALYTICS,
+                        ProviderWorkerRole.DEVELOPER,
+                        ProviderWorkerRole.MANAGER,
+                        ProviderWorkerRole.OWNER,
+                        ProviderWorkerRole.USER_MANAGER
+                    },
+                    UserEmail = _currentUserEmail,
+                    UserId = _currentUserId
+                }
+            };
+
             // set avatar
             if (entity.Avatar != null)
             {
@@ -432,6 +449,9 @@ namespace Manager
                 await _imageOriginBucket.Delete(entity.Background.Key);
                 await _imageTmpBucket.Delete(newEntity.Background.Key);
             }
+
+            if (newEntity.Workers == null)
+                newEntity.Workers = new List<ProviderWorker>();
 
             var replaceResponse = await _providerRepository.Replace(newEntity);
             if (replaceResponse == null)

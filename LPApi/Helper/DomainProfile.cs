@@ -14,7 +14,7 @@ namespace IdentityApi.Helper
         public DomainProfile()
         {
             CreateMap<AppUser, UserLoginResponseModel>()
-                .ForMember(x => x.ImageSrc, opt => opt.ResolveUsing(x => x.Avatar?.Src));
+                .ForMember(x => x.ImageSrc, opt => opt.MapFrom(x => x.Avatar == null ? null : x.Avatar.Src));
 
             // common models
             CreateMap<Language, LanguageDisplayModel>();
@@ -24,16 +24,16 @@ namespace IdentityApi.Helper
 
             // user
             CreateMap<AppUser, UserShortDataModel>()
-                .ForMember(x => x.AvatarSrc, opt => opt.ResolveUsing(z => z.Avatar?.Src))
-                .ForMember(x => x.CreatedTime, opt => opt.ResolveUsing(z => z.CreatedTime.ToLocalTime()))
-                .ForMember(x => x.UpdatedTime, opt => opt.ResolveUsing(z => z.UpdatedTime.ToLocalTime()));
+                .ForMember(x => x.AvatarSrc, opt => opt.MapFrom(z => z.Avatar == null ? null : z.Avatar.Src))
+                .ForMember(x => x.CreatedTime, opt => opt.MapFrom(z => z.CreatedTime.ToLocalTime()))
+                .ForMember(x => x.UpdatedTime, opt => opt.MapFrom(z => z.UpdatedTime.ToLocalTime()));
             CreateMap<AppUser, UserDataModel>()
                 .IncludeBase<AppUser, UserShortDataModel>();
             CreateMap<UserSocial, UserDataSocialModel>()
-                .ForMember(x => x.CreatedTime, opt => opt.ResolveUsing(z => z.CreatedTime.ToLocalTime()));
+                .ForMember(x => x.CreatedTime, opt => opt.MapFrom(z => z.CreatedTime.ToLocalTime()));
             CreateMap<AppUserProvider, UserDataProviderModel>();
             CreateMap<UserTel, UserDataTel>()
-                .ForMember(x => x.CreatedTime, opt => opt.ResolveUsing(z => z.CreatedTime.ToLocalTime()));
+                .ForMember(x => x.CreatedTime, opt => opt.MapFrom(z => z.CreatedTime.ToLocalTime()));
 
             CreateMap<AppUser, UserDisplayModel>();
             CreateMap<UserTel, UserTelDisplayModel>();
@@ -56,9 +56,9 @@ namespace IdentityApi.Helper
             
             // provider fingerprint
             CreateMap<ProviderFingerprint, ProviderFingerprintDisplayModel>()
-                .ForMember(x => x.FingerprintUpdateTime, t => t.ResolveUsing(x => x.FingerprintUpdateTime.ToLocalTime()));
+                .ForMember(x => x.FingerprintUpdateTime, t => t.MapFrom(x => x.FingerprintUpdateTime.ToLocalTime()));
             CreateMap<ProviderFingerprintCreateModel, ProviderFingerprint>()
-                .ForMember(x => x.FingerprintUpdateTime, t => t.ResolveUsing(x => DateTime.UtcNow));
+                .ForMember(x => x.FingerprintUpdateTime, t => t.MapFrom(x => DateTime.UtcNow));
 
             // provider roles
             CreateMap<ProviderRole, ProviderRoleDisplayModel>();
