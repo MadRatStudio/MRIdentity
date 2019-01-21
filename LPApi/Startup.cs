@@ -136,7 +136,7 @@ namespace IdentityApi
             app.UseHangfireDashboard(Configuration["Hangfire:DashboardUrl"], new DashboardOptions
             {
                 AppPath = Configuration["Client:Admin"],
-                Authorization = new List<Hangfire.Dashboard.IDashboardAuthorizationFilter> { new MRDashboardAuthorizationFilter() }
+                Authorization = new List<IDashboardAuthorizationFilter> { new MRDashboardAuthorizationFilter() }
             });
             app.UseHangfireServer();
 
