@@ -34,3 +34,11 @@
 2019-01-21 22:34:59.3288 Info Adding target File Target[errorFile]
 2019-01-21 22:34:59.3456 Info Configured from an XML element in D:\projects\MadRat\auth.madrat.studio\Api\LPApi\nlog.config...
 2019-01-21 22:34:59.3670 Info Found 53 configuration items
+2019-01-28 14:39:31.6715 Info Message Template Auto Format enabled
+2019-01-28 14:39:31.6715 Info Loading assembly: NLog.Web.AspNetCore
+2019-01-28 14:39:31.7300 Info Adding target File Target[allFile]
+2019-01-28 14:39:31.8644 Info Adding target File Target[errorFile]
+2019-01-28 14:39:31.9515 Info Configured from an XML element in F:\projects\mr\api.identity.madrat.studio\api.identity.madrat.studio\LPApi\nlog.config...
+2019-01-28 14:39:31.9962 Info Found 53 configuration items
+2019-01-28 14:39:36.7968 Info Shutting down logging...
+2019-01-28 14:39:36.8247 Info Logger has been shut down.
