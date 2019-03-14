@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using CommonApi.Errors;
+using CommonApi.Exception.Common;
+using CommonApi.Exception.MRSystem;
 using CommonApi.Resopnse;
 using ConnectorS3;
 using ConnectorS3.Domain.Image;
@@ -31,16 +33,16 @@ namespace Manager
             _originBucket = imageOriginBucket;
         }
 
-        public async Task<ApiResponse<ImageModel>> UploadTmp(IFormFile file)
+        public async Task<ImageModel> UploadTmp(IFormFile file)
         {
             if (file == null)
             {
-                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED));
+                throw new ModelDamagedException("File is required");
             }
 
             var type = file.ContentType?.ToLower() ?? string.Empty;
             if (string.IsNullOrWhiteSpace(type) || !AVALIABLE_TYPES.Contains(type))
-                return Fail(ECollection.BAD_DATA_FORMAT);
+                throw new ModelDamagedException("Bad image format");
 
             var name = file.Name;
             BucketUploadResponse bucketUploadResponse = null;
@@ -52,17 +54,16 @@ namespace Manager
 
             if (!bucketUploadResponse.IsSuccess)
             {
-                return Fail(ECollection.Select(ECollection.UNDEFINED_ERROR, new ModelError("Image", string.Join(", ", bucketUploadResponse.Error.Messages))));
+                throw new MRSystemException("Bucket upload model");
             }
 
-            return Ok(new ImageModel
+            return new ImageModel
             {
                 IsTmp = true,
                 Key = bucketUploadResponse.Key,
                 Name = name,
                 Url = bucketUploadResponse.Url
-            });
-
+            };
         }
 
         public async Task MoveToOrigin(string key)

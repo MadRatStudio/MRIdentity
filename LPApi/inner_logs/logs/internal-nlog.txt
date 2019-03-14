@@ -42,3 +42,165 @@
 2019-01-28 14:39:31.9962 Info Found 53 configuration items
 2019-01-28 14:39:36.7968 Info Shutting down logging...
 2019-01-28 14:39:36.8247 Info Logger has been shut down.
+2019-03-03 16:00:43.7737 Info Message Template Auto Format enabled
+2019-03-03 16:00:43.7841 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-03 16:00:43.8842 Info Adding target File Target[allFile]
+2019-03-03 16:00:43.8842 Info Adding target File Target[errorFile]
+2019-03-03 16:00:43.8988 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-03 16:00:43.9284 Info Found 53 configuration items
+2019-03-03 16:43:56.7596 Info Message Template Auto Format enabled
+2019-03-03 16:43:56.8018 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-03 16:43:56.9520 Info Adding target File Target[allFile]
+2019-03-03 16:43:56.9548 Info Adding target File Target[errorFile]
+2019-03-03 16:43:56.9720 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-03 16:43:57.0070 Info Found 53 configuration items
+2019-03-03 16:49:49.5769 Info Message Template Auto Format enabled
+2019-03-03 16:49:49.5906 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-03 16:49:49.6677 Info Adding target File Target[allFile]
+2019-03-03 16:49:49.6718 Info Adding target File Target[errorFile]
+2019-03-03 16:49:49.6718 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-03 16:49:49.7068 Info Found 53 configuration items
+2019-03-03 16:50:13.3660 Info Message Template Auto Format enabled
+2019-03-03 16:50:13.3850 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-03 16:50:13.4728 Info Adding target File Target[allFile]
+2019-03-03 16:50:13.4728 Info Adding target File Target[errorFile]
+2019-03-03 16:50:13.4879 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-03 16:50:13.5115 Info Found 53 configuration items
+2019-03-03 16:52:43.8359 Info Message Template Auto Format enabled
+2019-03-03 16:52:43.8518 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-03 16:52:43.9318 Info Adding target File Target[allFile]
+2019-03-03 16:52:43.9318 Info Adding target File Target[errorFile]
+2019-03-03 16:52:43.9459 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-03 16:52:43.9697 Info Found 53 configuration items
+2019-03-03 18:08:51.9372 Info Message Template Auto Format enabled
+2019-03-03 18:08:51.9479 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-03 18:08:52.0276 Info Adding target File Target[allFile]
+2019-03-03 18:08:52.0276 Info Adding target File Target[errorFile]
+2019-03-03 18:08:52.0413 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-03 18:08:52.0710 Info Found 53 configuration items
+2019-03-04 22:24:36.6320 Info Message Template Auto Format enabled
+2019-03-04 22:24:36.6649 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-04 22:24:36.7531 Info Adding target File Target[allFile]
+2019-03-04 22:24:36.7531 Info Adding target File Target[errorFile]
+2019-03-04 22:24:36.7531 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-04 22:24:36.7875 Info Found 53 configuration items
+2019-03-05 13:09:35.2226 Info Message Template Auto Format enabled
+2019-03-05 13:09:35.2674 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-05 13:09:35.3728 Info Adding target File Target[allFile]
+2019-03-05 13:09:35.3763 Info Adding target File Target[errorFile]
+2019-03-05 13:09:35.3763 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-05 13:09:35.4291 Info Found 53 configuration items
+2019-03-05 14:46:15.6545 Info Message Template Auto Format enabled
+2019-03-05 14:46:15.6687 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-05 14:46:15.7494 Info Adding target File Target[allFile]
+2019-03-05 14:46:15.7522 Info Adding target File Target[errorFile]
+2019-03-05 14:46:15.7522 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-05 14:46:15.7873 Info Found 53 configuration items
+2019-03-05 22:39:21.5343 Info Message Template Auto Format enabled
+2019-03-05 22:39:21.5677 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-05 22:39:21.7502 Info Adding target File Target[allFile]
+2019-03-05 22:39:21.7502 Info Adding target File Target[errorFile]
+2019-03-05 22:39:21.7739 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-05 22:39:21.8057 Info Found 53 configuration items
+2019-03-06 14:43:31.0776 Info Message Template Auto Format enabled
+2019-03-06 14:43:31.1036 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-06 14:43:31.2689 Info Adding target File Target[allFile]
+2019-03-06 14:43:31.2689 Info Adding target File Target[errorFile]
+2019-03-06 14:43:31.2848 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-06 14:43:31.3058 Info Found 53 configuration items
+2019-03-06 16:07:55.5541 Info Message Template Auto Format enabled
+2019-03-06 16:07:55.5630 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-06 16:07:55.6304 Info Adding target File Target[allFile]
+2019-03-06 16:07:55.6304 Info Adding target File Target[errorFile]
+2019-03-06 16:07:55.6438 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-06 16:07:55.6660 Info Found 53 configuration items
+2019-03-06 21:07:59.1206 Info Message Template Auto Format enabled
+2019-03-06 21:07:59.1462 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-06 21:07:59.2609 Info Adding target File Target[allFile]
+2019-03-06 21:07:59.2609 Info Adding target File Target[errorFile]
+2019-03-06 21:07:59.2727 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-06 21:07:59.2904 Info Found 53 configuration items
+2019-03-06 21:18:12.9779 Info Message Template Auto Format enabled
+2019-03-06 21:18:12.9900 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-06 21:18:13.0586 Info Adding target File Target[allFile]
+2019-03-06 21:18:13.0586 Info Adding target File Target[errorFile]
+2019-03-06 21:18:13.0729 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-06 21:18:13.1367 Info Found 53 configuration items
+2019-03-06 22:07:23.4175 Info Message Template Auto Format enabled
+2019-03-06 22:07:23.4281 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-06 22:07:23.5314 Info Adding target File Target[allFile]
+2019-03-06 22:07:23.5314 Info Adding target File Target[errorFile]
+2019-03-06 22:07:23.5314 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-06 22:07:23.5647 Info Found 53 configuration items
+2019-03-08 13:11:04.0167 Info Message Template Auto Format enabled
+2019-03-08 13:11:04.0517 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-08 13:11:04.1347 Info Adding target File Target[allFile]
+2019-03-08 13:11:04.1347 Info Adding target File Target[errorFile]
+2019-03-08 13:11:04.1491 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-08 13:11:04.1707 Info Found 53 configuration items
+2019-03-08 13:12:48.0389 Info Message Template Auto Format enabled
+2019-03-08 13:12:48.0495 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-08 13:12:48.1278 Info Adding target File Target[allFile]
+2019-03-08 13:12:48.1278 Info Adding target File Target[errorFile]
+2019-03-08 13:12:48.1403 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-08 13:12:48.1659 Info Found 53 configuration items
+2019-03-08 13:13:13.0608 Info Message Template Auto Format enabled
+2019-03-08 13:13:13.0735 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-08 13:13:13.1447 Info Adding target File Target[allFile]
+2019-03-08 13:13:13.1447 Info Adding target File Target[errorFile]
+2019-03-08 13:13:13.1604 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-08 13:13:13.1887 Info Found 53 configuration items
+2019-03-08 15:55:10.4784 Info Message Template Auto Format enabled
+2019-03-08 15:55:10.4915 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-08 15:55:10.5702 Info Adding target File Target[allFile]
+2019-03-08 15:55:10.5702 Info Adding target File Target[errorFile]
+2019-03-08 15:55:10.5868 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-08 15:55:10.6147 Info Found 53 configuration items
+2019-03-09 16:52:03.6613 Info Message Template Auto Format enabled
+2019-03-09 16:52:03.7035 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-09 16:52:03.7983 Info Adding target File Target[allFile]
+2019-03-09 16:52:03.7983 Info Adding target File Target[errorFile]
+2019-03-09 16:52:03.7983 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-09 16:52:03.8275 Info Found 53 configuration items
+2019-03-09 20:29:41.4569 Info Message Template Auto Format enabled
+2019-03-09 20:29:41.4756 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-09 20:29:41.5811 Info Adding target File Target[allFile]
+2019-03-09 20:29:41.5811 Info Adding target File Target[errorFile]
+2019-03-09 20:29:41.5988 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-09 20:29:41.6299 Info Found 53 configuration items
+2019-03-10 15:35:55.0479 Info Message Template Auto Format enabled
+2019-03-10 15:35:55.0824 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-10 15:35:55.1821 Info Adding target File Target[allFile]
+2019-03-10 15:35:55.1821 Info Adding target File Target[errorFile]
+2019-03-10 15:35:55.1963 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-10 15:35:55.2192 Info Found 53 configuration items
+2019-03-10 17:05:54.2548 Info Message Template Auto Format enabled
+2019-03-10 17:05:54.2659 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-10 17:05:54.3495 Info Adding target File Target[allFile]
+2019-03-10 17:05:54.3495 Info Adding target File Target[errorFile]
+2019-03-10 17:05:54.3646 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-10 17:05:54.3907 Info Found 53 configuration items
+2019-03-12 20:21:56.1038 Info Message Template Auto Format enabled
+2019-03-12 20:21:56.1313 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-12 20:21:56.2325 Info Adding target File Target[allFile]
+2019-03-12 20:21:56.2346 Info Adding target File Target[errorFile]
+2019-03-12 20:21:56.2346 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-12 20:21:56.2688 Info Found 53 configuration items
+2019-03-13 18:05:55.6481 Info Message Template Auto Format enabled
+2019-03-13 18:05:55.6904 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-13 18:05:55.8191 Info Adding target File Target[allFile]
+2019-03-13 18:05:55.8191 Info Adding target File Target[errorFile]
+2019-03-13 18:05:55.8323 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-13 18:05:55.8537 Info Found 53 configuration items
+2019-03-13 22:20:48.1394 Info Message Template Auto Format enabled
+2019-03-13 22:20:48.1653 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-13 22:20:48.4301 Info Adding target File Target[allFile]
+2019-03-13 22:20:48.4301 Info Adding target File Target[errorFile]
+2019-03-13 22:20:48.4406 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-13 22:20:48.4679 Info Found 53 configuration items
+2019-03-14 22:24:09.9041 Info Message Template Auto Format enabled
+2019-03-14 22:24:09.9294 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-14 22:24:10.0402 Info Adding target File Target[allFile]
+2019-03-14 22:24:10.0402 Info Adding target File Target[errorFile]
+2019-03-14 22:24:10.0402 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-14 22:24:10.0710 Info Found 53 configuration items

@@ -1,4 +1,5 @@
-﻿using Infrastructure.Model.User;
+﻿using Infrastructure.Model.Provider;
+using Infrastructure.Model.User;
 using Manager;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,7 @@ namespace IdentityApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("provider/email")]
+        [ProducesResponseType(200, Type = typeof(ProviderTokenResponse))]
         public async Task<IActionResult> LoginProvider([FromBody] UserProviderEmailLogin model)
         {
             if (!ModelState.IsValid)

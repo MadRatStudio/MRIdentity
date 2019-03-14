@@ -1,4 +1,6 @@
-﻿using CommonApi.Resopnse;
+﻿using CommonApi.Exception.Request;
+using CommonApi.Exception.User;
+using CommonApi.Resopnse;
 using CommonApi.Response;
 using Infrastructure.Model.User;
 using Manager;
@@ -44,6 +46,8 @@ namespace IdentityApi.Controllers
         [Route("login/password")]
         [AllowAnonymous]
         [ProducesResponseType(200, Type = typeof(UserLoginResponseModel))]
+        [ProducesResponseType(500, Type = typeof(BadRequestException))]
+        [ProducesResponseType(500, Type = typeof(LoginFailedException))]
         [HttpPost]
         public async Task<IActionResult> AuthEmail([FromBody]UserLoginModel model)
         {

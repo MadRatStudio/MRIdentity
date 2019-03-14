@@ -8,6 +8,9 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using CommonApi.Errors;
+using CommonApi.Exception.Common;
+using CommonApi.Exception.Provider;
+using CommonApi.Exception.User;
 using CommonApi.Identity;
 using CommonApi.Models;
 using CommonApi.Resopnse;
@@ -46,17 +49,18 @@ namespace Manager
         /// <param name="context">Context</param>
         /// <param name="model">UserProviderEmailLogin model</param>
         /// <returns></returns>
-        public async Task<ApiResponse<ProviderTokenResponse>> ProviderLoginEmail(HttpContext context, UserProviderEmailLogin model)
+        public async Task<ProviderTokenResponse> ProviderLoginEmail(HttpContext context, UserProviderEmailLogin model)
         {
             var user = await _appUserManager.FindByEmailAsync(model.Email);
-            if (user == null || !(await _appUserManager.CheckPasswordAsync(user, model.Password))) return Fail(ECollection.USER_NOT_FOUND);
+            if (user == null || !(await _appUserManager.CheckPasswordAsync(user, model.Password)))
+                throw new LoginFailedException(model.Email);
 
             var provider = await _providerRepository.GetFirst(x => x.Id == model.ProviderId && x.State);
             if (provider == null)
-                return Fail(ECollection.PROVIDER_NOT_FOUND);
+                throw new EntityNotFoundException(model.ProviderId, typeof(Provider));
 
             if (!provider.IsLoginEnabled)
-                return Fail(ECollection.PROVIDER_UNAVALIABLE);
+                throw new ProviderUnavaliableException(provider.Name);
 
             var response = new ProviderTokenResponse
             {
@@ -65,7 +69,7 @@ namespace Manager
 
             response.RedirectUrl = _createRedirectUrl(provider, response.Token);
 
-            return Ok(response);
+            return response;
         }
 
         /// <summary>

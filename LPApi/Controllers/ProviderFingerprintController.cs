@@ -63,14 +63,16 @@ namespace IdentityApi.Controllers
         /// <param name="name">fingerprint name</param>
         /// <returns></returns>
         [HttpDelete]
-        [ProducesResponseType(200, Type = typeof(ApiResponse))]
+        [ProducesResponseType(200, Type = typeof(OkResult))]
         [Route("{id}/{name}")]
         public async Task<IActionResult> Delete(string id, string name)
         {
             if (string.IsNullOrWhiteSpace(id) || string.IsNullOrWhiteSpace(name))
                 return BadRequest();
 
-            return Ok(await _providerManager.DeleteFingerprint(id, name));
+            await _providerManager.DeleteFingerprint(id, name);
+
+            return Ok();
         }
     }
 }

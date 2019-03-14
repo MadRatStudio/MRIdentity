@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using CommonApi.Errors;
+using CommonApi.Exception.Common;
 using CommonApi.Models;
 using CommonApi.Resopnse;
 using CommonApi.Response;
@@ -33,23 +34,22 @@ namespace Manager
         /// </summary>
         /// <param name="model">Model to insert in db</param>
         /// <returns>ApiResponse IdNameModel / ApiError</returns>
-        public async Task<ApiResponse<IdNameModel>> Create(CategoryUpdateModel model)
+        public async Task<IdNameModel> Create(CategoryUpdateModel model)
         {
-            var error = CheckUpdateModel(model);
-            if (error != null) return Fail(error);
+            CheckUpdateModel(model);
 
             model.Slug = model.Slug.ToLower();
             if ((await _providerCategoryRepository.Count(x => x.Slug == model.Slug && x.State)) > 0)
-                return Fail(ECollection.Select(ECollection.ENTITY_EXISTS, new ModelError("Slug", "Category with this slug already exists")));
+                throw new ModelDamagedException(nameof(model.Slug), "category with this slug already exists");
 
             var entity = _mapper.Map<ProviderCategory>(model);
             await _providerCategoryRepository.Insert(entity);
 
-            return Ok(new IdNameModel
+            return new IdNameModel
             {
                 Id = entity.Id,
                 Name = entity.Slug
-            });
+            };
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace Manager
                 Total = await _providerCategoryRepository.Count()
             };
 
-            foreach(var cat in list)
+            foreach (var cat in list)
             {
                 ProviderCategoryDisplayModel model = new ProviderCategoryDisplayModel()
                 {
@@ -88,11 +88,11 @@ namespace Manager
 
                 ProviderCategoryTranslation translation = null;
 
-                if(cat.Translations.Any(x => x.LanguageCode == languageCode))
+                if (cat.Translations.Any(x => x.LanguageCode == languageCode))
                 {
 
                     translation = cat.Translations.First(x => x.LanguageCode == languageCode);
-                } 
+                }
                 else
                 {
                     translation = cat.Translations.FirstOrDefault(x => x.IsDefault);
@@ -114,21 +114,21 @@ namespace Manager
         /// <param name="id"></param>
         /// <param name="model"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<IdNameModel>> Update(string id, CategoryUpdateModel model)
+        public async Task<IdNameModel> Update(string id, CategoryUpdateModel model)
         {
             if (string.IsNullOrWhiteSpace(id))
-                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Id", "Id is required")));
+                throw new ModelDamagedException(nameof(id), "is required");
 
             var existCount = await _providerCategoryRepository.Count(x => x.Id == id);
-            if (existCount != 1) return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, "Id", "Entity with this id do not exists"));
+            if (existCount != 1)
+                throw new EntityNotFoundException(id, typeof(ProviderCategory));
 
-            var checkModel = CheckUpdateModel(model);
-            if (checkModel != null) return Fail(checkModel);
+            CheckUpdateModel(model);
 
             var entity = _mapper.Map<ProviderCategory>(model);
             await _providerCategoryRepository.Replace(entity);
 
-            return Ok(new IdNameModel(entity.Id, entity.Slug));
+            return new IdNameModel(entity.Id, entity.Slug);
         }
 
         /// <summary>
@@ -136,41 +136,38 @@ namespace Manager
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<ApiResponse> Delete(string id)
+        public async Task Delete(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
-                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Id", "Id is required")));
+                throw new ModelDamagedException(nameof(id), "is required");
 
             var count = await _providerCategoryRepository.Count(x => x.State && x.Id == id);
             if (count < 1)
-                return Fail(ECollection.Select(ECollection.ENTITY_NOT_FOUND, new ModelError("Id", "Category with this id not found")));
+                throw new EntityNotFoundException(id, typeof(ProviderCategory));
 
             await _providerCategoryRepository.RemoveSoft(id);
-            return Ok();
         }
 
-        protected ApiError CheckUpdateModel(CategoryUpdateModel model)
+        protected void CheckUpdateModel(CategoryUpdateModel model)
         {
             if (model == null)
-                return ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Model", "Model is required"));
+                throw new ModelDamagedException(nameof(model), "is required");
 
             if (string.IsNullOrWhiteSpace(model.Slug))
-                return ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Slug", "Slug is required"));
+                throw new ModelDamagedException(nameof(model.Slug), "is required");
 
             if (model.Translations == null || !model.Translations.Any())
-                return ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Translations", "Translations is required"));
+                throw new ModelDamagedException(nameof(model.Translations), "is required");
 
             if (model.Translations.Count(x => x.IsDefault) != 1)
-                return ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Translations", "One translation must be default"));
+                throw new ModelDamagedException(nameof(model.Translations), "one must be default");
 
             var damagedTranslation = model.Translations.FirstOrDefault(x => string.IsNullOrWhiteSpace(x.Name) || string.IsNullOrWhiteSpace(x.LanguageCode));
             if (damagedTranslation != null)
-                return ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Translations", "Translation name and language code can not be empty"));
+                throw new ModelDamagedException(nameof(model.Translations), "damaged");
 
             if (model.Translations.GroupBy(x => x.LanguageCode).Any(x => x.Count() > 1))
-                return ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Translations", "Language code can not duplicate"));
-
-            return null;
+                throw new ModelDamagedException(nameof(model.Translations), "one must be default");
         }
     }
 }

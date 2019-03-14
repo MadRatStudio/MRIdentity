@@ -1,13 +1,10 @@
-﻿using CommonApi.Resopnse;
+﻿using CommonApi.Models;
 using CommonApi.Response;
 using Infrastructure.Model.Provider;
 using Manager;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace IdentityApi.Controllers
@@ -23,7 +20,17 @@ namespace IdentityApi.Controllers
             _providerManager = providerManager;
         }
 
+        [HttpGet]
+        [Route("{skip}/{limit}")]
+        [AllowAnonymous]
+        [ProducesResponseType(200, Type = typeof(ApiListResponse<ProviderShortDisplayModel>))]
+        public async Task<IActionResult> GetList(int skip, int limit, [FromQuery] string languageCode = null, [FromQuery] string q = null)
+        {
+            return Ok(await _providerManager.Get(skip, limit, languageCode, q));
+        }
+
         [HttpPost]
+        [ProducesResponseType(200, Type = typeof(IdNameModel))]
         public async Task<IActionResult> Create([FromBody] ProviderUpdateModel model)
         {
             if (!ModelState.IsValid)
@@ -36,7 +43,7 @@ namespace IdentityApi.Controllers
 
         [HttpGet]
         [Route("{slug}")]
-        [ProducesResponseType(200, Type = typeof(ApiResponse<ProviderDisplayModel>))]
+        [ProducesResponseType(200, Type = typeof(ProviderDisplayModel))]
         [AllowAnonymous]
         public async Task<IActionResult> Get(string slug, [FromQuery] string languageCode = null)
         {
@@ -45,18 +52,11 @@ namespace IdentityApi.Controllers
             return Ok(await _providerManager.GetToDisplay(slug, languageCode));
         }
 
-        [HttpGet]
-        [Route("{skip}/{limit}")]
-        [AllowAnonymous]
-        [ProducesResponseType(200, Type = typeof(ApiListResponse<ProviderShortDisplayModel>))]
-        public async Task<IActionResult> GetList(int skip, int limit, [FromQuery] string languageCode = null, [FromQuery] string q = null)
-        {
-            return Ok(await _providerManager.Get(skip, limit, languageCode, q));
-        }
+
 
         [HttpPut]
         [Route("{slug}")]
-        [ProducesResponseType(200, Type = typeof(ApiResponse<ProviderUpdateModel>))]
+        [ProducesResponseType(200, Type = typeof(ProviderUpdateModel))]
         public async Task<IActionResult> GetUpdateModel(string slug)
         {
             if (string.IsNullOrWhiteSpace(slug))
@@ -66,7 +66,7 @@ namespace IdentityApi.Controllers
         }
 
         [HttpPut]
-        [ProducesResponseType(200, Type = typeof(ApiResponse))]
+        [ProducesResponseType(200, Type = typeof(OkResult))]
         public async Task<IActionResult> Update([FromBody] ProviderUpdateModel model)
         {
             if (!ModelState.IsValid)
@@ -77,10 +77,11 @@ namespace IdentityApi.Controllers
 
         [HttpDelete]
         [Route("{id}")]
-        [ProducesResponseType(200, Type = typeof(ApiResponse))]
+        [ProducesResponseType(200, Type = typeof(OkResult))]
         public async Task<IActionResult> Delete(string id)
         {
-            return Ok(await _providerManager.Delete(id));
+            await _providerManager.Delete(id);
+            return Ok();
         }
         
     }

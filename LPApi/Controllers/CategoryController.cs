@@ -19,7 +19,7 @@ namespace IdentityApi.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(200, Type = typeof(ApiResponse<IdNameModel>))]
+        [ProducesResponseType(200, Type = typeof(IdNameModel))]
         public async Task<IActionResult> Create([FromBody] CategoryUpdateModel model)
         {
             return Json(await _categoryManager.Create(model));
@@ -35,7 +35,7 @@ namespace IdentityApi.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        [ProducesResponseType(200, Type = typeof(ApiResponse<IdNameModel>))]
+        [ProducesResponseType(200, Type = typeof(IdNameModel))]
         public async Task<IActionResult> Update(string id, [FromBody] CategoryUpdateModel model)
         {
             return Json(await _categoryManager.Update(id, model));
@@ -43,10 +43,11 @@ namespace IdentityApi.Controllers
 
         [HttpDelete]
         [Route("{id}")]
-        [ProducesResponseType(200, Type = typeof(ApiResponse))]
+        [ProducesResponseType(200, Type = typeof(OkResult))]
         public async Task<IActionResult> Delete(string id)
         {
-            return Json(await _categoryManager.Delete(id));
+            await _categoryManager.Delete(id);
+            return Json(new OkResult());
         }
     }
 }

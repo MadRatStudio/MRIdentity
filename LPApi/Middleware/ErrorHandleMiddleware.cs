@@ -1,4 +1,6 @@
 ﻿using CommonApi.Errors;
+using CommonApi.Exception.Basic;
+using CommonApi.Exception.MRSystem;
 using CommonApi.Resopnse;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -29,18 +31,27 @@ namespace IdentityApi.Middleware
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Server error");
-                await HandleExceptionAsync(context, ex);
+
+                if (ex is MRException)
+                {
+                    await HandleExceptionAsync(context, (MRException)ex);
+                    return;
+                }
+
+                await HandleExceptionAsync(context, new MRSystemException());
             }
         }
 
-        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private static Task HandleExceptionAsync(HttpContext context, MRException exception)
         {
-            var code = HttpStatusCode.OK; // 500 if unexpected
-
-            var result = JsonConvert.SerializeObject(new ApiResponse
+            var result = JsonConvert.SerializeObject(new
             {
-                Error = ECollection.UNDEFINED_ERROR
+                code = exception.Code,
+                message = exception.Message,
+                user_message = exception.UserMessage,
             });
+
+            var code = HttpStatusCode.InternalServerError;
 
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)code;

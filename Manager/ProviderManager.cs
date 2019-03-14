@@ -7,6 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using CommonApi.Errors;
+using CommonApi.Exception.Basic;
+using CommonApi.Exception.Common;
+using CommonApi.Exception.MRSystem;
+using CommonApi.Exception.Request;
 using CommonApi.Models;
 using CommonApi.Resopnse;
 using CommonApi.Response;
@@ -46,33 +50,33 @@ namespace Manager
         /// </summary>
         /// <param name="model">new provider model</param>
         /// <returns></returns>
-        public async Task<ApiResponse<IdNameModel>> Create(ProviderUpdateModel model)
+        public async Task<IdNameModel> Create(ProviderUpdateModel model)
         {
             if (model == null)
-                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("model", "Empty")));
+                throw new ModelDamagedException(nameof(model), "can not be empty");
 
             var user = await GetCurrentUser();
             if (!(await _appUserManager.IsInRoleAsync(user, "MANAGER")) && !(await _appUserManager.IsInRoleAsync(user, "ADMIN")))
-                return Fail(ECollection.Select(ECollection.ACCESS_DENIED));
+                throw new NotEnoughRightsException();
 
             if (string.IsNullOrWhiteSpace(model.Slug))
-                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("slug", "Empty")));
+                throw new ModelDamagedException(nameof(model.Slug), "can not be empty");
 
             model.Slug = model.Slug.ToLower();
 
             if (string.IsNullOrWhiteSpace(model.Category))
-                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Category", "Category slug is required")));
+                throw new ModelDamagedException(nameof(model.Category), "can not be empty");
 
             if (model.Translations == null || !model.Translations.Any())
-                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Translations", "required")));
+                throw new ModelDamagedException(nameof(model.Translations), "can not be null or empty");
 
             var isSlugExists = (await _providerRepository.Count(x => x.Slug == model.Slug && x.State)) > 0;
             if (isSlugExists)
-                return Fail(ECollection.Select(ECollection.ENTITY_EXISTS));
+                throw new MRSystemException($"Provider with slug {model.Slug} already exists");
 
             var category = await _providerCategoryRepository.GetFirst(x => x.Slug == model.Category);
             if (category == null)
-                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Category", $"Category with slug {model.Slug} do not exists")));
+                throw new EntityNotFoundException(model.Category, typeof(ProviderCategory));
 
             var entity = _mapper.Map<Provider>(model);
             entity.Owner = _mapper.Map<ProviderOwner>(user);
@@ -121,11 +125,11 @@ namespace Manager
             }
 
             var result = await _providerRepository.Insert(entity);
-            return Ok(new IdNameModel
+            return new IdNameModel
             {
                 Id = result.Id,
                 Name = result.Name
-            });
+            };
 
         }
 
@@ -135,33 +139,32 @@ namespace Manager
         /// <param name="providerId">Target provider id</param>
         /// <param name="model">Create fingerprint model</param>
         /// <returns>Provider fingerprint display model</returns>
-        public async Task<ApiResponse<ProviderFingerprintDisplayModel>> CreateFingerprint(string providerId, ProviderFingerprintCreateModel model)
+        public async Task<ProviderFingerprintDisplayModel> CreateFingerprint(string providerId, ProviderFingerprintCreateModel model)
         {
             if (string.IsNullOrWhiteSpace(providerId))
-                return Fail(ECollection.MODEL_DAMAGED);
+                throw new ModelDamagedException(nameof(providerId), "is required");
 
             if (model == null)
-                return Fail(ECollection.MODEL_DAMAGED);
+                throw new ModelDamagedException(nameof(model), "is required");
 
             if (string.IsNullOrWhiteSpace(model.Name))
-                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Name", "Name is required")));
+                throw new ModelDamagedException(nameof(model.Name), "is required");
 
             var entity = await _providerRepository.GetFirst(providerId);
             if (entity == null)
-                return Fail(ECollection.ENTITY_NOT_FOUND);
+                throw new EntityNotFoundException(providerId, typeof(Provider));
 
             if (entity.Owner.Id != (await GetCurrentUser())?.Id)
-                return Fail(ECollection.ACCESS_DENIED);
+                throw new AccessDeniedException(entity.Id, typeof(Provider));
 
             if (entity.Fingerprints == null)
                 entity.Fingerprints = new List<ProviderFingerprint>();
 
             if (entity.Fingerprints.Any(x => x.Name.ToLower() == model.Name.ToLower()))
-                return Fail(ECollection.Select(ECollection.ENTITY_EXISTS, new ModelError("Fingerprint", "Fingerprint with this name is exists")));
+                throw new MRSystemException($"Fingerprint with name {model.Name} already exists");
 
             if (entity.Fingerprints == null)
                 entity.Fingerprints = new List<ProviderFingerprint>();
-
 
             var fingerprint = _mapper.Map<ProviderFingerprint>(model);
 
@@ -171,7 +174,7 @@ namespace Manager
             entity.Fingerprints.Add(fingerprint);
             await _providerRepository.UpdateFingerprints(entity);
 
-            return Ok(_mapper.Map<ProviderFingerprintDisplayModel>(fingerprint));
+            return _mapper.Map<ProviderFingerprintDisplayModel>(fingerprint);
         }
 
         /// <summary>
@@ -179,11 +182,11 @@ namespace Manager
         /// </summary>
         /// <param name="slug"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<ProviderDisplayModel>> GetToDisplay(string slug, string languageCode)
+        public async Task<ProviderDisplayModel> GetToDisplay(string slug, string languageCode)
         {
             var entity = await _providerRepository.GetFirst(x => x.Slug == slug && x.State);
             if (entity == null)
-                return Fail(ECollection.ENTITY_NOT_FOUND);
+                throw new EntityNotFoundException(slug, typeof(Provider));
 
             var model = _mapper.Map<ProviderDisplayModel>(entity);
             if (string.IsNullOrWhiteSpace(languageCode))
@@ -204,7 +207,7 @@ namespace Manager
             model.DisplayName = translation.DisplayName;
             model.KeyWords = translation.KeyWords;
 
-            return Ok(model);
+            return model;
         }
 
         /// <summary>
@@ -238,7 +241,6 @@ namespace Manager
             var allCategories = await _providerCategoryRepository.GetAll(categoriesToDownload);
             var allTags = await _providerTagRepository.GetAll(tagsToDownload);
 
-
             foreach (var provider in list)
             {
                 var converted = _mapper.Map<ProviderShortDisplayModel>(provider);
@@ -251,7 +253,6 @@ namespace Manager
                     {
                         Slug = category.Slug
                     };
-
 
                     if (category.Translations.Any(z => z.LanguageCode == languageCode))
                     {
@@ -317,18 +318,17 @@ namespace Manager
         public async Task<ApiListResponse<ProviderFingerprintDisplayModel>> GetProviderFingerprints(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
-                return FailList<ProviderFingerprintDisplayModel>(ECollection.MODEL_DAMAGED);
+                throw new BadRequestException();
 
             var user = await GetCurrentUser();
             if (!await _providerRepository.ExistsWithOwner(id, user.Id))
-                return FailList<ProviderFingerprintDisplayModel>(ECollection.ACCESS_DENIED);
+                throw new AccessDeniedException(id, typeof(Provider));
 
             var entity = await _providerRepository.GetFirst(id);
             if (entity.Fingerprints == null || !entity.Fingerprints.Any())
                 return new ApiListResponse<ProviderFingerprintDisplayModel>
                 {
                     Data = new List<ProviderFingerprintDisplayModel>(),
-                    Error = null,
                     Skip = 0,
                     Limit = 1,
                     Total = 0
@@ -349,23 +349,23 @@ namespace Manager
         /// </summary>
         /// <param name="slug"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<ProviderUpdateModel>> GetUpdateModel(string slug)
+        public async Task<ProviderUpdateModel> GetUpdateModel(string slug)
         {
             if (string.IsNullOrWhiteSpace(slug))
-                return Fail(ECollection.MODEL_DAMAGED);
+                throw new BadRequestException();
 
             var entity = await _providerRepository.GetFirst(x => x.Slug == slug.ToLower() && x.State);
             if (entity == null)
-                return Fail(ECollection.ENTITY_NOT_FOUND);
+                throw new EntityNotFoundException(slug, typeof(Provider));
 
             var user = await GetCurrentUser();
             if (entity.Owner.Id != user.Id)
-                return Fail(ECollection.ACCESS_DENIED);
+                throw new AccessDeniedException(slug, typeof(Provider));
 
             var model = _mapper.Map<ProviderUpdateModel>(entity);
             model.Category = entity.Category.Slug;
 
-            return Ok(model);
+            return model;
         }
 
         /// <summary>
@@ -373,39 +373,39 @@ namespace Manager
         /// </summary>
         /// <param name="model">Provider to update</param>
         /// <returns>Provider updpate model</returns>
-        public async Task<ApiResponse<ProviderUpdateModel>> Update(ProviderUpdateModel model)
+        public async Task<ProviderUpdateModel> Update(ProviderUpdateModel model)
         {
             if (model == null)
-                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("model", "Empty")));
+                throw new BadRequestException();
 
             var user = await GetCurrentUser();
             if (!(await _appUserManager.IsInRoleAsync(user, "MANAGER")) && !(await _appUserManager.IsInRoleAsync(user, "ADMIN")))
-                return Fail(ECollection.Select(ECollection.ACCESS_DENIED));
+                throw new NotEnoughRightsException();
 
             if (string.IsNullOrWhiteSpace(model.Slug))
-                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("slug", "Empty")));
+                throw new ModelDamagedException(nameof(model.Slug), "can not be null");
 
             model.Slug = model.Slug.ToLower();
 
             if (string.IsNullOrWhiteSpace(model.Category))
-                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Category", "Category slug is required")));
+                throw new ModelDamagedException(nameof(model.Category), "can not be null");
 
             if (model.Translations == null || !model.Translations.Any())
-                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Translations", "required")));
+                throw new ModelDamagedException(nameof(model.Translations), "can not be null or empty");
 
             if (model.Translations.Count(x => x.IsDefault) != 1)
-                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Translation", "Required one default translation")));
+                throw new ModelDamagedException(nameof(model.Translations), "default is required");
 
             var entity = await _providerRepository.GetFirst(model.Id);
             if (entity == null)
-                return Fail(ECollection.Select(ECollection.USER_NOT_FOUND));
+                throw new EntityNotFoundException(model.Id, typeof(Provider));
 
             if (entity.Owner.Id != (await GetCurrentUser()).Id)
-                return Fail(ECollection.ACCESS_DENIED);
+                throw new AccessDeniedException(model.Id, typeof(Provider));
 
             var category = await _providerCategoryRepository.GetFirst(x => x.Slug == model.Category);
             if (category == null)
-                return Fail(ECollection.Select(ECollection.ENTITY_NOT_FOUND, new ModelError("Category", "Category not found")));
+                throw new EntityNotFoundException(model.Category, typeof(ProviderCategory));
 
             var newEntity = _mapper.Map<Provider>(model);
             newEntity.Owner = entity.Owner;
@@ -422,7 +422,7 @@ namespace Manager
             {
                 var aMoveResponse = await _imageOriginBucket.MoveFrom(_imageTmpBucket.BucketFullPath, newEntity.Avatar.Key);
                 if (!aMoveResponse.IsSuccess)
-                    return Fail(ECollection.TRANSFER_IMAGE_ERROR);
+                    throw new MRSystemException("Can not transfer image");
 
                 newEntity.Avatar.Url = aMoveResponse.Url;
                 removeAvatar = true;
@@ -432,7 +432,7 @@ namespace Manager
             {
                 var bMoveResponse = await _imageOriginBucket.MoveFrom(_imageTmpBucket.BucketFullPath, newEntity.Avatar.Key);
                 if (!bMoveResponse.IsSuccess)
-                    return Fail(ECollection.TRANSFER_IMAGE_ERROR);
+                    throw new MRSystemException("Can not transfer image");
 
                 newEntity.Background.Key = bMoveResponse.Key;
                 removeBackground = true;
@@ -455,34 +455,33 @@ namespace Manager
 
             var replaceResponse = await _providerRepository.Replace(newEntity);
             if (replaceResponse == null)
-                return Fail(ECollection.UNDEFINED_ERROR);
+                throw new MRSystemException();
 
-            return Ok(_mapper.Map<ProviderUpdateModel>(newEntity));
+            return _mapper.Map<ProviderUpdateModel>(newEntity);
         }
 
         /// <summary>
         /// Delete provider
         /// </summary>
         /// <param name="id">id of provider</param>
-        /// <returns></returns>
-        public async Task<ApiResponse> Delete(string id)
+        public async Task Delete(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
-                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError("Id", "empty")));
+                throw new ModelDamagedException(nameof(id), "can not be empty");
 
             var user = await GetCurrentUser();
             var entity = await _providerRepository.GetFirst(id);
 
             if (entity == null)
-                return Fail(ECollection.ENTITY_NOT_FOUND);
+                throw new EntityNotFoundException(id, typeof(Provider));
 
             if (entity.Owner.Id != user.Id)
-                return Fail(ECollection.ACCESS_DENIED);
+                throw new AccessDeniedException(id, typeof(Provider));
 
             var result = await _providerRepository.RemoveSoft(id);
 
-            if (result.ModifiedCount == 1) return Ok();
-            return Fail(ECollection.UNDEFINED_ERROR);
+            if (result.ModifiedCount != 1)
+                throw new MRSystemException();
 
         }
 
@@ -491,24 +490,21 @@ namespace Manager
         /// </summary>
         /// <param name="id">provider id</param>
         /// <param name="name">fingerprint name</param>
-        /// <returns></returns>
-        public async Task<ApiResponse> DeleteFingerprint(string id, string name)
+        public async Task DeleteFingerprint(string id, string name)
         {
             if (string.IsNullOrWhiteSpace(id) || string.IsNullOrWhiteSpace(name))
-                return Fail(ECollection.MODEL_DAMAGED);
+                throw new ModelDamagedException($"{nameof(id)} and {nameof(name)}", "are required");
 
             var user = await GetCurrentUser();
             if (!(await _providerRepository.ExistsWithOwner(id, user.Id)))
-                return Fail(ECollection.ENTITY_NOT_FOUND);
+                throw new EntityNotFoundException(id, typeof(Provider));
 
             var entity = await _providerRepository.GetFirst(id);
             if (entity.Fingerprints == null || !entity.Fingerprints.Any(x => x.Name.ToLower() == name.ToLower()))
-                return Fail(ECollection.Select(ECollection.ENTITY_NOT_FOUND, new ModelError("Fingerprint", "Fingerprint not found")));
+                throw new EntityNotFoundException("name", typeof(ProviderFingerprint));
 
             entity.Fingerprints.RemoveAll(x => x.Name.ToLower() == name.ToLower());
             await _providerRepository.Replace(entity);
-
-            return Ok();
         }
 
         protected string _generateFingerprint(Provider provider, ProviderFingerprint fingerprint)

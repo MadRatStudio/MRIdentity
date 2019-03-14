@@ -36,5 +36,13 @@ namespace Manager
 
             return result;
         }
+
+        public async Task<ApiListResponse<LanguageDisplayModel>> All()
+        {
+            var total = await _languageRepository.Count();
+            var list = await _languageRepository.Search(0, (int)total, string.Empty);
+
+            return new ApiListResponse<LanguageDisplayModel>(_mapper.Map<List<LanguageDisplayModel>>(list), 0, (int)total, total);
+        }
     }
 }

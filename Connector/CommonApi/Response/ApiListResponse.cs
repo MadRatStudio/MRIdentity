@@ -1,9 +1,6 @@
-﻿using CommonApi.Resopnse;
-using Newtonsoft.Json;
-using System;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace CommonApi.Response
 {
@@ -21,9 +18,6 @@ namespace CommonApi.Response
         [JsonProperty("skip")]
         public int Skip { get; set; }
 
-        [JsonProperty("error")]
-        public ApiError Error { get; set; }
-
         public ApiListResponse() { }
 
         public ApiListResponse(int skip, int limit)
@@ -34,16 +28,10 @@ namespace CommonApi.Response
 
         public ApiListResponse(IEnumerable<T> data, int take, int limit, long total)
         {
-            Error = null;
             Data = data?.ToList();
             Limit = take;
             Skip = limit;
             Total = total;
-        }
-
-        public ApiListResponse(ApiError error)
-        {
-            Error = error;
         }
     }
 }

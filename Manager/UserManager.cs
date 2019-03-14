@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using CommonApi.Errors;
+using CommonApi.Exception.Request;
+using CommonApi.Exception.User;
 using CommonApi.Resopnse;
 using CommonApi.Response;
 using Dal;
@@ -74,12 +76,15 @@ namespace Manager
         /// </summary>
         /// <param name="model">Sign in model</param>
         /// <returns>User token model</returns>
-        public async Task<ApiResponse<UserLoginResponseModel>> TokenEmail(UserLoginModel model)
+        public async Task<UserLoginResponseModel> TokenEmail(UserLoginModel model)
         {
-            if (model == null) return Fail(0, null);
+            if (model == null)
+                throw new BadRequestException();
+
             var userBucket = await GetIdentity(model);
 
-            if (userBucket == null) return Fail(0, "Bad login");
+            if (userBucket == null)
+                throw new LoginFailedException(model.Email);
 
             var user = userBucket.Item1;
             var roles = userBucket.Item2;
@@ -110,7 +115,7 @@ namespace Manager
 
             await _appUserManager.AddLoginAsync(user, new Microsoft.AspNetCore.Identity.UserLoginInfo(LoginOptions.SERVICE_LOGIN_PROVIDER, encoded, LoginOptions.SERVICE_LOGIN_DISPLAY));
 
-            return Ok(response);
+            return response;
         }
 
         #endregion

@@ -68,7 +68,6 @@ namespace CommonApi.Manager
             return new ApiListResponse<T>
             {
                 Data = new System.Collections.Generic.List<T>(),
-                Error = error,
                 Total = 0,
                 Skip = 0,
                 Limit = 0
