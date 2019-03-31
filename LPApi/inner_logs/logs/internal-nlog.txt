@@ -204,3 +204,236 @@
 2019-03-14 22:24:10.0402 Info Adding target File Target[errorFile]
 2019-03-14 22:24:10.0402 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
 2019-03-14 22:24:10.0710 Info Found 53 configuration items
+2019-03-17 13:06:18.3993 Info Message Template Auto Format enabled
+2019-03-17 13:06:18.4482 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-17 13:06:18.5990 Info Adding target File Target[allFile]
+2019-03-17 13:06:18.5990 Info Adding target File Target[errorFile]
+2019-03-17 13:06:18.5990 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-17 13:06:18.6500 Info Found 53 configuration items
+2019-03-17 14:24:39.3889 Info Message Template Auto Format enabled
+2019-03-17 14:24:39.4013 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-17 14:24:39.4717 Info Adding target File Target[allFile]
+2019-03-17 14:24:39.4740 Info Adding target File Target[errorFile]
+2019-03-17 14:24:39.4740 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-17 14:24:39.5022 Info Found 53 configuration items
+2019-03-17 18:40:53.2120 Info Message Template Auto Format enabled
+2019-03-17 18:40:53.2254 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-17 18:40:53.3018 Info Adding target File Target[allFile]
+2019-03-17 18:40:53.3046 Info Adding target File Target[errorFile]
+2019-03-17 18:40:53.3046 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-17 18:40:53.3416 Info Found 53 configuration items
+2019-03-17 22:16:49.5233 Info Message Template Auto Format enabled
+2019-03-17 22:16:49.5233 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-17 22:16:49.6279 Info Adding target File Target[allFile]
+2019-03-17 22:16:49.6307 Info Adding target File Target[errorFile]
+2019-03-17 22:16:49.6307 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-17 22:16:49.6647 Info Found 53 configuration items
+2019-03-17 22:32:20.3788 Info Message Template Auto Format enabled
+2019-03-17 22:32:20.4023 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-17 22:32:20.5228 Info Adding target File Target[allFile]
+2019-03-17 22:32:20.5228 Info Adding target File Target[errorFile]
+2019-03-17 22:32:20.5442 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-17 22:32:20.5764 Info Found 53 configuration items
+2019-03-19 22:15:21.6104 Info Message Template Auto Format enabled
+2019-03-19 22:15:21.6540 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-19 22:15:21.7597 Info Adding target File Target[allFile]
+2019-03-19 22:15:21.7597 Info Adding target File Target[errorFile]
+2019-03-19 22:15:21.7701 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-19 22:15:21.7893 Info Found 53 configuration items
+2019-03-19 22:27:15.7317 Info Message Template Auto Format enabled
+2019-03-19 22:27:15.7471 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-19 22:27:15.8464 Info Adding target File Target[allFile]
+2019-03-19 22:27:15.8464 Info Adding target File Target[errorFile]
+2019-03-19 22:27:15.8603 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-19 22:27:15.8915 Info Found 53 configuration items
+2019-03-19 22:31:38.3263 Info Message Template Auto Format enabled
+2019-03-19 22:31:38.3419 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-19 22:31:38.4252 Info Adding target File Target[allFile]
+2019-03-19 22:31:38.4252 Info Adding target File Target[errorFile]
+2019-03-19 22:31:38.4351 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-19 22:31:38.4543 Info Found 53 configuration items
+2019-03-21 16:34:35.3038 Info Message Template Auto Format enabled
+2019-03-21 16:34:35.3304 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-21 16:34:35.4037 Info Adding target File Target[allFile]
+2019-03-21 16:34:35.4037 Info Adding target File Target[errorFile]
+2019-03-21 16:34:35.4199 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-21 16:34:35.4539 Info Found 53 configuration items
+2019-03-21 21:25:48.6700 Info Message Template Auto Format enabled
+2019-03-21 21:25:48.7041 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-21 21:25:48.8221 Info Adding target File Target[allFile]
+2019-03-21 21:25:48.8245 Info Adding target File Target[errorFile]
+2019-03-21 21:25:48.8245 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-21 21:25:48.8506 Info Found 53 configuration items
+2019-03-22 11:36:28.1914 Info Message Template Auto Format enabled
+2019-03-22 11:36:28.2160 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-22 11:36:28.3319 Info Adding target File Target[allFile]
+2019-03-22 11:36:28.3319 Info Adding target File Target[errorFile]
+2019-03-22 11:36:28.3459 Info Configured from an XML element in C:\projects\MadRat\identity\api.identity.madrat.studio\LPApi\nlog.config...
+2019-03-22 11:36:28.3675 Info Found 53 configuration items
+2019-03-22 15:04:00.8603 Info Message Template Auto Format enabled
+2019-03-22 15:04:00.8798 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-22 15:04:01.0220 Info Adding target FileTarget(Name=allFile)
+2019-03-22 15:04:01.0220 Info Adding target FileTarget(Name=errorFile)
+2019-03-22 15:04:01.0614 Info Found 53 configuration items
+2019-03-22 15:31:23.1336 Info Message Template Auto Format enabled
+2019-03-22 15:31:23.1419 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-22 15:31:23.2014 Info Adding target FileTarget(Name=allFile)
+2019-03-22 15:31:23.6781 Info Adding target FileTarget(Name=errorFile)
+2019-03-22 15:31:23.7221 Info Found 53 configuration items
+2019-03-22 21:44:53.2814 Info Message Template Auto Format enabled
+2019-03-22 21:44:53.3110 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-22 21:44:53.5338 Info Adding target FileTarget(Name=allFile)
+2019-03-22 21:44:53.5338 Info Adding target FileTarget(Name=errorFile)
+2019-03-22 21:44:53.5776 Info Found 53 configuration items
+2019-03-22 21:47:40.7580 Info Message Template Auto Format enabled
+2019-03-22 21:47:40.7580 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-22 21:47:40.8385 Info Adding target FileTarget(Name=allFile)
+2019-03-22 21:47:40.8385 Info Adding target FileTarget(Name=errorFile)
+2019-03-22 21:47:40.8879 Info Found 53 configuration items
+2019-03-23 12:00:27.4124 Info Message Template Auto Format enabled
+2019-03-23 12:00:27.4317 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-23 12:00:27.5022 Info Adding target FileTarget(Name=allFile)
+2019-03-23 12:00:27.5022 Info Adding target FileTarget(Name=errorFile)
+2019-03-23 12:00:27.5400 Info Found 53 configuration items
+2019-03-23 15:09:40.5183 Info Message Template Auto Format enabled
+2019-03-23 15:09:40.5183 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-23 15:09:40.5897 Info Adding target FileTarget(Name=allFile)
+2019-03-23 15:09:40.5897 Info Adding target FileTarget(Name=errorFile)
+2019-03-23 15:09:40.6415 Info Found 53 configuration items
+2019-03-23 16:27:28.8922 Info AppDomain Shutting down. Logger closing...
+2019-03-23 16:27:28.8922 Info Logger has been shut down.
+2019-03-23 16:50:18.4513 Info Message Template Auto Format enabled
+2019-03-23 16:50:18.4663 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-23 16:50:18.5285 Info Adding target FileTarget(Name=allFile)
+2019-03-23 16:50:18.5309 Info Adding target FileTarget(Name=errorFile)
+2019-03-23 16:50:18.5731 Info Found 53 configuration items
+2019-03-23 17:29:29.5667 Info Message Template Auto Format enabled
+2019-03-23 17:29:29.5667 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-23 17:29:29.6423 Info Adding target FileTarget(Name=allFile)
+2019-03-23 17:29:29.6423 Info Adding target FileTarget(Name=errorFile)
+2019-03-23 17:29:29.7222 Info Found 53 configuration items
+2019-03-23 17:52:51.9846 Info Message Template Auto Format enabled
+2019-03-23 17:52:51.9969 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-23 17:52:52.0981 Info Adding target FileTarget(Name=allFile)
+2019-03-23 17:52:52.0981 Info Adding target FileTarget(Name=errorFile)
+2019-03-23 17:52:52.1403 Info Found 53 configuration items
+2019-03-23 17:58:11.7271 Info Message Template Auto Format enabled
+2019-03-23 17:58:11.7352 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-23 17:58:11.8053 Info Adding target FileTarget(Name=allFile)
+2019-03-23 17:58:11.8053 Info Adding target FileTarget(Name=errorFile)
+2019-03-23 17:58:11.8501 Info Found 53 configuration items
+2019-03-23 18:00:21.4668 Info Message Template Auto Format enabled
+2019-03-23 18:00:21.4746 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-23 18:00:21.5418 Info Adding target FileTarget(Name=allFile)
+2019-03-23 18:00:21.5418 Info Adding target FileTarget(Name=errorFile)
+2019-03-23 18:00:21.5826 Info Found 53 configuration items
+2019-03-24 17:22:40.7299 Info Message Template Auto Format enabled
+2019-03-24 17:22:41.0085 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-24 17:22:41.4998 Info Adding target FileTarget(Name=allFile)
+2019-03-24 17:22:41.5145 Info Adding target FileTarget(Name=errorFile)
+2019-03-24 17:22:41.8009 Info Found 53 configuration items
+2019-03-25 22:06:15.0051 Info Message Template Auto Format enabled
+2019-03-25 22:06:15.0265 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-25 22:06:15.1120 Info Adding target FileTarget(Name=allFile)
+2019-03-25 22:06:15.1120 Info Adding target FileTarget(Name=errorFile)
+2019-03-25 22:06:15.1593 Info Found 53 configuration items
+2019-03-25 22:19:56.4640 Info Message Template Auto Format enabled
+2019-03-25 22:19:56.4721 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-25 22:19:56.5712 Info Adding target FileTarget(Name=allFile)
+2019-03-25 22:19:56.5712 Info Adding target FileTarget(Name=errorFile)
+2019-03-25 22:19:56.6179 Info Found 53 configuration items
+2019-03-25 22:41:15.8216 Info Message Template Auto Format enabled
+2019-03-25 22:41:15.8297 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-25 22:41:15.9182 Info Adding target FileTarget(Name=allFile)
+2019-03-25 22:41:15.9277 Info Adding target FileTarget(Name=errorFile)
+2019-03-25 22:41:15.9727 Info Found 53 configuration items
+2019-03-25 22:53:55.1083 Info Message Template Auto Format enabled
+2019-03-25 22:53:55.1245 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-25 22:53:55.2599 Info Adding target FileTarget(Name=allFile)
+2019-03-25 22:53:55.2599 Info Adding target FileTarget(Name=errorFile)
+2019-03-25 22:53:55.3241 Info Found 53 configuration items
+2019-03-26 23:53:17.0520 Info Message Template Auto Format enabled
+2019-03-26 23:53:17.0953 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-26 23:53:17.1919 Info Adding target FileTarget(Name=allFile)
+2019-03-26 23:53:17.1919 Info Adding target FileTarget(Name=errorFile)
+2019-03-26 23:53:17.2306 Info Found 53 configuration items
+2019-03-27 15:19:39.8649 Info Message Template Auto Format enabled
+2019-03-27 15:19:39.9212 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-27 15:19:39.9904 Info Adding target FileTarget(Name=allFile)
+2019-03-27 15:19:39.9904 Info Adding target FileTarget(Name=errorFile)
+2019-03-27 15:19:40.0371 Info Found 53 configuration items
+2019-03-27 17:04:38.8090 Info Message Template Auto Format enabled
+2019-03-27 17:04:38.8265 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-27 17:04:38.9310 Info Adding target FileTarget(Name=allFile)
+2019-03-27 17:04:38.9310 Info Adding target FileTarget(Name=errorFile)
+2019-03-27 17:04:38.9838 Info Found 53 configuration items
+2019-03-27 17:53:22.0929 Info Message Template Auto Format enabled
+2019-03-27 17:53:22.0929 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-27 17:53:22.2305 Info Adding target FileTarget(Name=allFile)
+2019-03-27 17:53:22.2305 Info Adding target FileTarget(Name=errorFile)
+2019-03-27 17:53:22.2980 Info Found 53 configuration items
+2019-03-27 22:34:53.1026 Info Message Template Auto Format enabled
+2019-03-27 22:34:53.1407 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-27 22:34:53.2202 Info Adding target FileTarget(Name=allFile)
+2019-03-27 22:34:53.2202 Info Adding target FileTarget(Name=errorFile)
+2019-03-27 22:34:53.2765 Info Found 53 configuration items
+2019-03-27 23:18:49.3661 Info Message Template Auto Format enabled
+2019-03-27 23:18:49.3746 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-27 23:18:49.4541 Info Adding target FileTarget(Name=allFile)
+2019-03-27 23:18:49.4541 Info Adding target FileTarget(Name=errorFile)
+2019-03-27 23:18:49.4961 Info Found 53 configuration items
+2019-03-27 23:49:16.9826 Info Message Template Auto Format enabled
+2019-03-27 23:49:16.9826 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-27 23:49:17.0648 Info Adding target FileTarget(Name=allFile)
+2019-03-27 23:49:17.0648 Info Adding target FileTarget(Name=errorFile)
+2019-03-27 23:49:17.1107 Info Found 53 configuration items
+2019-03-28 00:07:28.1045 Info Message Template Auto Format enabled
+2019-03-28 00:07:28.1045 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-28 00:07:28.1897 Info Adding target FileTarget(Name=allFile)
+2019-03-28 00:07:28.1897 Info Adding target FileTarget(Name=errorFile)
+2019-03-28 00:07:28.2329 Info Found 53 configuration items
+2019-03-28 21:23:24.6091 Info Message Template Auto Format enabled
+2019-03-28 21:23:24.6302 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-28 21:23:24.7307 Info Adding target FileTarget(Name=allFile)
+2019-03-28 21:23:24.7307 Info Adding target FileTarget(Name=errorFile)
+2019-03-28 21:23:24.7943 Info Found 53 configuration items
+2019-03-29 19:55:47.2823 Info Message Template Auto Format enabled
+2019-03-29 19:55:47.3010 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-29 19:55:47.3752 Info Adding target FileTarget(Name=allFile)
+2019-03-29 19:55:47.3752 Info Adding target FileTarget(Name=errorFile)
+2019-03-29 19:55:47.4201 Info Found 53 configuration items
+2019-03-30 11:48:28.4044 Info Message Template Auto Format enabled
+2019-03-30 11:48:28.4194 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-30 11:48:28.4887 Info Adding target FileTarget(Name=allFile)
+2019-03-30 11:48:28.4887 Info Adding target FileTarget(Name=errorFile)
+2019-03-30 11:48:28.5302 Info Found 53 configuration items
+2019-03-31 14:42:14.5190 Info Message Template Auto Format enabled
+2019-03-31 14:42:14.5600 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-31 14:42:14.6566 Info Adding target FileTarget(Name=allFile)
+2019-03-31 14:42:14.6566 Info Adding target FileTarget(Name=errorFile)
+2019-03-31 14:42:14.7039 Info Found 53 configuration items
+2019-03-31 14:48:15.3325 Info Message Template Auto Format enabled
+2019-03-31 14:48:15.3472 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-31 14:48:15.4934 Info Adding target FileTarget(Name=allFile)
+2019-03-31 14:48:15.4934 Info Adding target FileTarget(Name=errorFile)
+2019-03-31 14:48:15.5572 Info Found 53 configuration items
+2019-03-31 15:41:31.9297 Info Message Template Auto Format enabled
+2019-03-31 15:41:31.9391 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-31 15:41:32.0178 Info Adding target FileTarget(Name=allFile)
+2019-03-31 15:41:32.0178 Info Adding target FileTarget(Name=errorFile)
+2019-03-31 15:41:32.0672 Info Found 53 configuration items
+2019-03-31 15:51:08.9671 Info Message Template Auto Format enabled
+2019-03-31 15:51:08.9831 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-31 15:51:09.1313 Info Adding target FileTarget(Name=allFile)
+2019-03-31 15:51:09.1313 Info Adding target FileTarget(Name=errorFile)
+2019-03-31 15:51:09.2162 Info Found 53 configuration items
+2019-03-31 15:52:05.3942 Info Message Template Auto Format enabled
+2019-03-31 15:52:05.3942 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-31 15:52:05.4892 Info Adding target FileTarget(Name=allFile)
+2019-03-31 15:52:05.4892 Info Adding target FileTarget(Name=errorFile)
+2019-03-31 15:52:05.5394 Info Found 53 configuration items
+2019-03-31 21:37:37.6546 Info Message Template Auto Format enabled
+2019-03-31 21:37:37.6644 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-31 21:37:37.7391 Info Adding target FileTarget(Name=allFile)
+2019-03-31 21:37:37.7391 Info Adding target FileTarget(Name=errorFile)
+2019-03-31 21:37:37.7872 Info Found 53 configuration items

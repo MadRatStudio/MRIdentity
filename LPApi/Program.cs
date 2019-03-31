@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using IdentityApi.Init;
+﻿using System.IO;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Web;
 
@@ -18,20 +12,6 @@ namespace IdentityApi
         public static void Main(string[] args)
         {
             var host = BuildWebHost(args);
-            using (var scope = host.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                try
-                {
-                    Database.Seed(services).Wait();
-                }
-                catch (Exception ex)
-                {
-                    Console.Write(ex.ToString());
-                    Console.ReadLine();
-                }
-            }
-
             host.Run();
         }
 

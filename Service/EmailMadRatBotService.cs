@@ -10,7 +10,7 @@ namespace Service
 {
     public class EmailMadRatBotService : IBaseService
     {
-        public TimeSpan Schedule => TimeSpan.FromMinutes(1);
+        public TimeSpan Schedule => TimeSpan.FromSeconds(30);
 
         const int LIMIT = 10;
 
@@ -23,6 +23,10 @@ namespace Service
             _emailMadRatBotManager = emailMadRatBotManager;
         }
 
+        public void SendEmailsSync()
+        {
+            SendEmails().Wait();
+        }
 
         public async Task SendEmails()
         {

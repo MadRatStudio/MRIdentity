@@ -1,4 +1,5 @@
 ﻿using CommonApi.Resopnse;
+using CommonApi.Response;
 using Infrastructure.Model.User;
 using Manager;
 using Microsoft.AspNetCore.Authorization;
@@ -95,6 +96,8 @@ namespace IdentityApi.Controllers
 
             return Ok(await _accountManager.UpdateEmail(model));
         }
+
+
 
         /// <summary>
         /// Close current user account

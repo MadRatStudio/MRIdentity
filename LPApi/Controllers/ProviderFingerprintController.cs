@@ -44,7 +44,7 @@ namespace IdentityApi.Controllers
         /// <returns>Fingerprint display model</returns>
         [HttpPost]
         [Route("{id}")]
-        [ProducesResponseType(200, Type = typeof(ApiResponse<ProviderFingerprintDisplayModel>))]
+        [ProducesResponseType(200, Type = typeof(ProviderFingerprintDisplayModel))]
         public async Task<IActionResult> Create(string id, [FromBody] ProviderFingerprintCreateModel model)
         {
             if (string.IsNullOrWhiteSpace(id))

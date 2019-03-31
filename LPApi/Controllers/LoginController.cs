@@ -1,4 +1,7 @@
-﻿using Infrastructure.Model.Provider;
+﻿using CommonApi.Exception.Request;
+using CommonApi.Exception.User;
+using CommonApi.Response;
+using Infrastructure.Model.Provider;
 using Infrastructure.Model.User;
 using Manager;
 using Microsoft.AspNetCore.Authorization;
@@ -20,6 +23,58 @@ namespace IdentityApi.Controllers
         {
             _loginManager = loginManager;
         }
+
+        #region login
+
+
+        [HttpPost]
+        [Route("email")]
+        [AllowAnonymous]
+        [ProducesResponseType(200, Type = typeof(UserLoginResponseModel))]
+        [ProducesResponseType(500, Type = typeof(BadRequestException))]
+        [ProducesResponseType(500, Type = typeof(LoginFailedException))]
+        public async Task<IActionResult> AuthEmail([FromBody]UserLoginModel model)
+        {
+            return Ok(await _loginManager.LoginEmail(model));
+        }
+
+        [HttpPost]
+        [Route("external/facebook")]
+        [AllowAnonymous]
+        public async Task<IActionResult> AuthFacebook()
+        {
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("external/google")]
+        [AllowAnonymous]
+        [ProducesResponseType(200, Type = typeof(UserLoginResponseModel))]
+        public async Task<IActionResult> AuthGoogle([FromBody] UserGoogleAuthModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadModelResponse();
+            }
+
+            return Ok(await _loginManager.LoginGoogle(model));
+        }
+        #endregion
+
+        #region Signup
+
+        [HttpPost]
+        [Route("signup/email")]
+        [AllowAnonymous]
+        public async Task<IActionResult> SignupEmail([FromBody] UserSignupModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadModelResponse();
+
+            return Ok(await _loginManager.SignupEmail(model));
+        }
+
+        #endregion
 
         /// <summary>
         /// Standart login form for selected provider
@@ -58,6 +113,25 @@ namespace IdentityApi.Controllers
                 return BadRequest();
 
             return Ok(await _loginManager.ProviderLoginInstant(HttpContext, id));
+        }
+
+        [HttpGet]
+        [Route("reset_password/{email}")]
+        [ProducesResponseType(200, Type = typeof(OkResult))]
+        public async Task<IActionResult> ResetPassword(string email)
+        {
+            return Ok(await _loginManager.ResetPasswordRequest(email));
+        }
+
+        [HttpPut]
+        [Route("reset_password")]
+        [ProducesResponseType(200, Type = typeof(ApiOkResult))]
+        public async Task<IActionResult> ApproveResetPassword([FromBody] UserResetPasswordModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadModelResponse();
+
+            return Ok(await _loginManager.ResetPasswordApprove(model));
         }
 
     }

@@ -2,21 +2,29 @@
 using Dal.Tasks;
 using Infrastructure.Entities;
 using Infrastructure.Entities.Tasks;
-using Infrastructure.Model.Common;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using MigrationRunner.Infrastructure.Attr;
+using MigrationRunner.Infrastructure.Interface;
 using MRDbIdentity.Domain;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace IdentityApi.Init
+namespace MigrationRunner.Migrations
 {
-    public static class Database
+    [MRMigration("Startup migration", "31.03.2019")]
+    public class StartupMigration : BasicMigration, IMigration
     {
+        public override async Task Run()
+        {
+            await Seed(_serviceProvider);
+        }
+
         private static List<Role> Roles = new List<Role>
         {
             new Role
@@ -77,9 +85,9 @@ namespace IdentityApi.Init
 
         const string LANGUAGES_FILE = "Data/LanguageCodes.json";
 
-        public static async Task Seed(IServiceProvider service)
+        public async Task Seed(IServiceProvider service)
         {
-            Console.WriteLine($"Start seed database");
+            _logAction($"Start seed database", Infrastructure.Enum.LogType.COMMON);
 
             await SeedUsers(service);
             Console.WriteLine("\n");
@@ -92,7 +100,7 @@ namespace IdentityApi.Init
             Console.WriteLine($"Seed database finished");
         }
 
-        private static async Task SeedUsers(IServiceProvider service)
+        private async Task SeedUsers(IServiceProvider service)
         {
             var userRepository = service.GetRequiredService<IUserStore<AppUser>>();
             var roleRepository = service.GetRequiredService<IRoleStore<Role>>();
@@ -134,7 +142,7 @@ namespace IdentityApi.Init
             Console.WriteLine($"Seed users finished");
         }
 
-        private static async Task SeedLanguages(IServiceProvider service)
+        private async Task SeedLanguages(IServiceProvider service)
         {
             var languageRepository = service.GetRequiredService<LanguageRepository>();
 
@@ -153,7 +161,7 @@ namespace IdentityApi.Init
                 languages = JsonConvert.DeserializeObject<List<Language>>(json);
             }
 
-            if(languages == null || !languages.Any())
+            if (languages == null || !languages.Any())
             {
                 Console.WriteLine("No languages in file!");
                 return;
@@ -166,20 +174,20 @@ namespace IdentityApi.Init
             // all languages
             var allLanguages = await languageRepository.Get(new MRDb.Tools.DbQuery<Language>().Where(x => x.Id != null));
 
-            if(allLanguages != null && allLanguages.Any())
+            if (allLanguages != null && allLanguages.Any())
             {
                 languagesToDelete = allLanguages.Select(x => x).ToList();
             }
 
-            foreach(var lang in languages)
+            foreach (var lang in languages)
             {
                 var exists = allLanguages.FirstOrDefault(x => x.Code == lang.Code);
-                if(exists != null)
+                if (exists != null)
                 {
                     languagesToDelete.RemoveAll(x => x.Code == exists.Code);
 
                     // update if changed
-                    if(exists.Name != lang.Name || exists.NativeName != lang.NativeName)
+                    if (exists.Name != lang.Name || exists.NativeName != lang.NativeName)
                     {
                         exists.Name = lang.Name;
                         exists.NativeName = lang.NativeName;
@@ -221,7 +229,7 @@ namespace IdentityApi.Init
             Console.WriteLine($"Deleted languages: {languagesToDelete.Count}");
         }
 
-        private static async Task SendEmails(IServiceProvider service)
+        private async Task SendEmails(IServiceProvider service)
         {
             Console.WriteLine("Setup emails to send");
             var repo = service.GetRequiredService<EmailSendTaskRepository>();

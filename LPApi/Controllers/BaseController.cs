@@ -1,5 +1,7 @@
 ﻿using CommonApi.Errors;
+using CommonApi.Exception.Common;
 using CommonApi.Resopnse;
+using CommonApi.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
@@ -20,25 +22,9 @@ namespace IdentityApi.Controllers
         }
 
         protected IActionResult BadModelResponse() => BadModelResponse(ModelState);
-        protected IActionResult BadModelResponse(ModelStateDictionary pairs)
+        protected IActionResult BadModelResponse(ModelStateDictionary state)
         {
-            ApiResponse response = new ApiResponse
-            {
-                Response = null,
-                Error = ECollection.MODEL_DAMAGED
-            };
-
-            if(pairs.ErrorCount > 0)
-            {
-                var error = pairs.First();
-                response.Error.Data = new CommonApi.Errors.ModelError
-                {
-                    Property = error.Key,
-                    Error = error.Value.Errors.First().ErrorMessage
-                };
-            }
-
-            return Ok(response);
+            throw new BadModelException(state);
         }
     }
 }

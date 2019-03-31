@@ -6,6 +6,7 @@ using Infrastructure.Model.Provider;
 using Infrastructure.Model.User;
 using MRDbIdentity.Domain;
 using System;
+using System.Linq;
 
 namespace IdentityApi.Helper
 {
@@ -28,7 +29,8 @@ namespace IdentityApi.Helper
                 .ForMember(x => x.CreatedTime, opt => opt.MapFrom(z => z.CreatedTime.ToLocalTime()))
                 .ForMember(x => x.UpdatedTime, opt => opt.MapFrom(z => z.UpdatedTime.ToLocalTime()));
             CreateMap<AppUser, UserDataModel>()
-                .IncludeBase<AppUser, UserShortDataModel>();
+                .IncludeBase<AppUser, UserShortDataModel>()
+                .ForMember(x => x.Roles, opt => opt.MapFrom(z => z.Roles.Select(x => x.RoleName).ToList()));
             CreateMap<UserSocial, UserDataSocialModel>()
                 .ForMember(x => x.CreatedTime, opt => opt.MapFrom(z => z.CreatedTime.ToLocalTime()));
             CreateMap<AppUserProvider, UserDataProviderModel>();
@@ -37,6 +39,8 @@ namespace IdentityApi.Helper
 
             CreateMap<AppUser, UserDisplayModel>();
             CreateMap<UserTel, UserTelDisplayModel>();
+
+            CreateMap<UserSignupModel, AppUser>();
 
             // provider models
             CreateMap<ProviderCategory, ProviderCategoryDisplayModel>();

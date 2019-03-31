@@ -6,6 +6,7 @@ using Infrastructure.Model.User;
 using Manager;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace IdentityApi.Controllers
@@ -32,34 +33,50 @@ namespace IdentityApi.Controllers
             return Ok(await _userManager.AdminGetCollection(skip, limit, q));
         }
 
+        [Route("admin/roles/{id}")]
+        [HttpGet]
+        [Authorize(Roles = "ADMIN")]
+        [ProducesResponseType(200, Type = typeof(List<string>))]
+        public async Task<IActionResult> GetRoles(string id)
+        {
+            return Ok(await _userManager.GetRoles(id));
+        }
+
         [Route("admin/update/{id}")]
         [Authorize(Roles = "ADMIN")]
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(ApiResponse<UserDataModel>))]
+        [ProducesResponseType(200, Type = typeof(UserDataModel))]
         public async Task<IActionResult> AdminUpdate(string id)
         {
             return Ok(await _userManager.AdminGetUserById(id));
         }
 
-        #endregion
-
-        [Route("login/password")]
-        [AllowAnonymous]
-        [ProducesResponseType(200, Type = typeof(UserLoginResponseModel))]
-        [ProducesResponseType(500, Type = typeof(BadRequestException))]
-        [ProducesResponseType(500, Type = typeof(LoginFailedException))]
-        [HttpPost]
-        public async Task<IActionResult> AuthEmail([FromBody]UserLoginModel model)
-        {
-            return Ok(await _userManager.TokenEmail(model));
-        }
-
-        [Route("login/facebook")]
-        [AllowAnonymous]
-        [HttpPost]
-        public async Task<IActionResult> AuthFacebook()
+        [HttpPut]
+        [Route("admin/update/{id}")]
+        [Authorize(Roles = "ADMIN")]
+        [ProducesResponseType(200, Type = typeof(UserCreateModel))]
+        public async Task<IActionResult> AdminUpdate(string id, [FromBody] UserCreateModel model)
         {
             return Ok();
         }
+
+        [HttpPost]
+        [Route("admin")]
+        [Authorize(Roles = "ADMIN")]
+        [ProducesResponseType(200, Type = typeof(UserShortDataModel))]
+        public async Task<IActionResult> Create([FromBody] UserCreateModel model)
+        {
+            return Ok(await _userManager.AdminCreate(model));
+        }
+
+        [HttpDelete]
+        [Route("admin/{id}")]
+        [Authorize(Roles = "ADMIN")]
+        [ProducesResponseType(200, Type = typeof(OkResult))]
+        public async Task<IActionResult> AdminDelete(string id)
+        {
+            return Ok(await _userManager.AdminDelete(id));
+        }
+        #endregion
     }
 }

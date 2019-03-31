@@ -54,8 +54,8 @@ namespace IdentityApi.Controllers
 
 
 
-        [HttpPut]
-        [Route("{slug}")]
+        [HttpGet]
+        [Route("update/{slug}")]
         [ProducesResponseType(200, Type = typeof(ProviderUpdateModel))]
         public async Task<IActionResult> GetUpdateModel(string slug)
         {

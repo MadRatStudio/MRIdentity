@@ -6,12 +6,16 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using CommonApi.Email;
+using CommonApi.Email.User;
 using CommonApi.Errors;
+using CommonApi.Exception.Common;
 using CommonApi.Exception.Request;
 using CommonApi.Exception.User;
 using CommonApi.Resopnse;
 using CommonApi.Response;
 using Dal;
+using Dal.Tasks;
 using Infrastructure.Entities;
 using Infrastructure.Model.User;
 using Manager.Options;
@@ -20,16 +24,32 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using MRDbIdentity.Infrastructure.Interface;
 using MRDbIdentity.Service;
+using Tools;
 
 namespace Manager
 {
     public class UserManager : BaseManager
     {
         protected readonly AppUserRepository _appUserRepository;
+        protected readonly EmailSendTaskRepository _emailSendTaskRepository;
+        protected readonly TemplateParser _templateParser;
 
-        public UserManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper, ILoggerFactory loggerFactory, AppUserRepository appUserRepository) : base(httpContextAccessor, appUserManager, mapper, loggerFactory)
+        public UserManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper,
+            ILoggerFactory loggerFactory, AppUserRepository appUserRepository, EmailSendTaskRepository emailSendTaskRepository,
+            TemplateParser templateParser) : base(httpContextAccessor, appUserManager, mapper, loggerFactory)
         {
             _appUserRepository = appUserRepository;
+            _emailSendTaskRepository = emailSendTaskRepository;
+            _templateParser = templateParser;
+        }
+
+        public async Task<List<string>> GetRoles(string id)
+        {
+            var user = await _appUserManager.FindByIdAsync(id);
+            if (user == null)
+                throw new EntityNotFoundException(id, typeof(AppUser));
+
+            return user.Roles.Select(x => x.RoleName).ToList();
         }
 
         #region admin
@@ -52,101 +72,78 @@ namespace Manager
             return result;
         }
 
-        public async Task<ApiResponse<UserDataModel>> AdminGetUserById(string id)
+        public async Task<UserDataModel> AdminGetUserById(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
-                return Fail(ECollection.Select(ECollection.MODEL_DAMAGED));
-
-            var entity = await _appUserRepository.GetByIdAdmin(id);
-            if(entity == null)
-            {
-                return Fail(ECollection.Select(ECollection.ENTITY_NOT_FOUND, new ModelError("Id", null)));
-            }
-
-            var model = _mapper.Map<UserDataModel>(entity);
-            return Ok(model);
-        }
-
-        #endregion
-
-        #region login
-
-        /// <summary>
-        /// Generate user token by email
-        /// </summary>
-        /// <param name="model">Sign in model</param>
-        /// <returns>User token model</returns>
-        public async Task<UserLoginResponseModel> TokenEmail(UserLoginModel model)
-        {
-            if (model == null)
                 throw new BadRequestException();
 
-            var userBucket = await GetIdentity(model);
+            var entity = await _appUserRepository.GetByIdAdmin(id);
+            if (entity == null)
+                throw new EntityNotFoundException(id, typeof(AppUser));
 
-            if (userBucket == null)
-                throw new LoginFailedException(model.Email);
+            return _mapper.Map<UserDataModel>(entity);
+        }
 
-            var user = userBucket.Item1;
-            var roles = userBucket.Item2;
-            var identity = userBucket.Item3;
+        public async Task<UserShortDataModel> AdminCreate(UserCreateModel model)
+        {
+            if (model == null)
+                throw new ModelDamagedException(nameof(model), "is required");
 
-            var now = DateTime.UtcNow;
-            var expires = now.Add(TimeSpan.FromSeconds(AuthOptions.LIFETIME));
+            if((await _appUserManager.FindByEmailAsync(model.Email)) != null)
+                throw new EntityExistsException(nameof(model.Email), model.Email, typeof(AppUser));
 
-            var jwt = new JwtSecurityToken(
-                issuer: AuthOptions.ISSUER,
-                audience: AuthOptions.AUDIENCE,
-                notBefore: now,
-                expires: expires,
-                claims: identity.Claims,
-                signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-
-            var encoded = new JwtSecurityTokenHandler().WriteToken(jwt);
-
-            var response = _mapper.Map<UserLoginResponseModel>(user);
-            response.Roles = roles;
-            response.Token = new UserLoginTokenResponseModel
+            var user = new AppUser
             {
-                Expires = expires,
-                Token = encoded,
-                LoginProvider = LoginOptions.SERVICE_LOGIN_PROVIDER,
-                LoginProviderDisplay = LoginOptions.SERVICE_LOGIN_DISPLAY
+                Birthday = new DateTime(),
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = model.Email,
+                Tels = model.Tels?.Select((x) => new MRDbIdentity.Domain.UserTel
+                {
+                    CreatedTime = DateTime.UtcNow,
+                    Name = x.Name,
+                    Number = x.Number
+                }).ToList() ?? new List<MRDbIdentity.Domain.UserTel>(),
+                UserName = model.Email
             };
 
-            await _appUserManager.AddLoginAsync(user, new Microsoft.AspNetCore.Identity.UserLoginInfo(LoginOptions.SERVICE_LOGIN_PROVIDER, encoded, LoginOptions.SERVICE_LOGIN_DISPLAY));
+            var createResult = await _appUserManager.CreateAsync(user);
+            if (!createResult.Succeeded)
+            {
+                throw new SystemException("Can not create user");
+            }
 
-            return response;
+            await _appUserRepository.AddToRoleAsync(user, "USER", new System.Threading.CancellationToken());
+
+            UserCreateTemplateModel templateModel = new UserCreateTemplateModel
+            {
+                Provider = "MR Identity",
+                CallbackUrl = "https://google.com",
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName
+            };
+
+            var emailBody = await _templateParser.Render(null, EmailTemplateCollection.USER_INVITE, templateModel);
+            await _emailSendTaskRepository.InsertEmail(user.Email, "MR identity invite", emailBody, Infrastructure.Entities.Tasks.EmailTaskBot.MadRatBot);
+
+            return _mapper.Map<UserShortDataModel>(user);
+        }
+
+        public async Task<bool> AdminDelete(string id)
+        {
+            var user = await _appUserManager.FindByIdAsync(id);
+            if (user == null)
+                throw new EntityNotFoundException(id, typeof(AppUser));
+
+            if (id == (await GetCurrentUser()).Id)
+                throw new SystemException("Can not delete self");
+
+            var result = await _appUserManager.DeleteAsync(user);
+            return result.Succeeded;
         }
 
         #endregion
 
-
-        /// <summary>
-        /// Add claims to user
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        protected async Task<Tuple<AppUser, List<string>, ClaimsIdentity>> GetIdentity(UserLoginModel model)
-        {
-            var user = await _appUserManager.FindByEmailAsync(model.Email);
-            if (user == null) return null;
-
-            if (!await _appUserManager.CheckPasswordAsync(user, model.Password)) return null;
-            var roles = await _appUserManager.GetRolesAsync(user);
-
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, user.Email),
-                new Claim(TokenOptions.USER_ID, user.Id)
-            };
-
-            foreach(var role in roles)
-            {
-                claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role));
-            }
-
-            ClaimsIdentity identity = new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
-            return new Tuple<AppUser, List<string>, ClaimsIdentity>(user, roles.ToList(), identity);
-        }
     }
 }

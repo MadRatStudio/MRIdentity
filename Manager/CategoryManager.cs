@@ -109,6 +109,34 @@ namespace Manager
         }
 
         /// <summary>
+        /// Get category model to update
+        /// </summary>
+        /// <param name="slug"></param>
+        /// <returns></returns>
+        /// TODO Add access check
+        public async Task<CategoryUpdateModel> Get(string slug)
+        {
+            var entity = await _providerCategoryRepository.GetFirst(x => x.Slug == slug);
+            if (entity == null)
+                throw new EntityNotFoundException(slug, typeof(ProviderCategory), "Can not find category");
+
+            var model = new CategoryUpdateModel
+            {
+                Slug = entity.Slug,
+                Translations = entity.Translations.Select(x =>
+                    new CategoryTranslationUpdateModel
+                    {
+                        Description = x.Description,
+                        IsDefault = x.IsDefault,
+                        LanguageCode = x.LanguageCode,
+                        Name = x.Name
+                    }).ToList()
+            };
+
+            return model;
+        }
+
+        /// <summary>
         /// Update
         /// </summary>
         /// <param name="id"></param>

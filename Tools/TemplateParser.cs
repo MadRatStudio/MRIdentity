@@ -28,5 +28,13 @@ namespace Tools
 
             return await _engine.CompileRenderAsync<T>(path, model);
         }
+
+        public async Task<string> Render<T>(string file, T model)
+        {
+            if (!file.EndsWith(".cshtml") && !file.EndsWith(".html"))
+                file += ".cshtml";
+
+            return await _engine.CompileRenderAsync<T>(file, model);
+        }
     }
 }

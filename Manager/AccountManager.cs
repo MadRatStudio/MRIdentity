@@ -1,9 +1,16 @@
 ﻿using AutoMapper;
+using CommonApi.Email;
 using CommonApi.Errors;
+using CommonApi.Exception.Common;
+using CommonApi.Exception.MRSystem;
 using CommonApi.Resopnse;
+using CommonApi.Response;
 using Dal;
+using Dal.Tasks;
 using Infrastructure.Entities;
 using Infrastructure.Model.User;
+using Infrastructure.System.Appsettings;
+using Infrastructure.Template.User;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -13,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tools;
 
 namespace Manager
 {
@@ -21,13 +29,21 @@ namespace Manager
         protected readonly AppUserRepository _appUserRepository;
         protected readonly ImageTmpBucket _imageTmpBucket;
         protected readonly ImageOriginBucket _imageOriginBucket;
+        protected readonly UrlRedirectSettings _urlRedirectSettings;
+        protected readonly TemplateParser _templateParser;
+        protected readonly EmailSendTaskRepository _emailSendTaskRepository;
 
-        public AccountManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, IMapper mapper, ILoggerFactory loggerFactory, AppUserRepository appUserRepository,
-            ImageTmpBucket imageTmpBucket, ImageOriginBucket imageOriginBucket) : base(httpContextAccessor, appUserManager, mapper, loggerFactory)
+        public AccountManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager,
+            IMapper mapper, ILoggerFactory loggerFactory, AppUserRepository appUserRepository,
+            ImageTmpBucket imageTmpBucket, ImageOriginBucket imageOriginBucket,
+             UrlRedirectSettings urlRedirectSettings, TemplateParser templateParser, EmailSendTaskRepository emailSendTaskRepository) : base(httpContextAccessor, appUserManager, mapper, loggerFactory)
         {
             _appUserRepository = appUserRepository;
             _imageTmpBucket = imageTmpBucket;
             _imageOriginBucket = imageOriginBucket;
+            _urlRedirectSettings = urlRedirectSettings;
+            _templateParser = templateParser;
+            _emailSendTaskRepository = emailSendTaskRepository;
         }
 
         /// <summary>
@@ -123,9 +139,10 @@ namespace Manager
             if (user.Status == UserStatus.Blocked)
                 return Fail(ECollection.USER_BLOCKED);
 
-            if(user.Tels != null && user.Tels.Any())
+            if (user.Tels != null && user.Tels.Any())
             {
-                if(user.Tels.Any(x => x.Name.ToLower() == name.ToLower())){
+                if (user.Tels.Any(x => x.Name.ToLower() == name.ToLower()))
+                {
                     user.Tels.RemoveAll(x => x.Name.ToLower() == name.ToLower());
 
                     await _appUserRepository.Replace(user);
@@ -157,6 +174,7 @@ namespace Manager
 
             return Ok();
         }
+
 
         /// <summary>
         /// Close current user account

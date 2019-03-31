@@ -9,6 +9,7 @@ namespace Infrastructure.Model.User
         public List<UserDataSocialModel> Socials { get; set; }
         public List<UserDataProviderModel> ConnectedProviders { get; set; }
         public List<UserDataTel> Tels { get; set; }
+        public List<string> Roles { get; set; }
     }
 
     public class UserShortDataModel

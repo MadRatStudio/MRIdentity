@@ -31,6 +31,14 @@ namespace IdentityApi.Init
             configuration.GetSection("Templates").Bind(tSettings);
             services.AddSingleton(tSettings);
 
+            ExternalServiceSettings externalSettings = new ExternalServiceSettings();
+            configuration.GetSection("ExternalServices").Bind(externalSettings);
+            services.AddSingleton(externalSettings);
+
+            UrlRedirectSettings urlSettings = new UrlRedirectSettings();
+            configuration.GetSection("UrlRedirect").Bind(urlSettings);
+            services.AddSingleton(urlSettings);
+
             // tools
             services.AddTransient<TemplateParser>();
 

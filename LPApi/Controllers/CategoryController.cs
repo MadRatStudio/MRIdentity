@@ -33,6 +33,14 @@ namespace IdentityApi.Controllers
             return Json(await _categoryManager.Get(skip, limit, q, languageCode));
         }
 
+        [HttpGet]
+        [Route("{slug}")]
+        [ProducesResponseType(200, Type = typeof(CategoryUpdateModel))]
+        public async Task<IActionResult> Get(string slug)
+        {
+            return Json(await _categoryManager.Get(slug));
+        }
+
         [HttpPut]
         [Route("{id}")]
         [ProducesResponseType(200, Type = typeof(IdNameModel))]

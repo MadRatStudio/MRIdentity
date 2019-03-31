@@ -3,10 +3,6 @@ using Hangfire.Mongo;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Service;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace IdentityApi.Init
 {
@@ -28,11 +24,10 @@ namespace IdentityApi.Init
             var provider = services.BuildServiceProvider();
 
             var backgroundJob = provider.GetRequiredService<IBackgroundJobClient>();
-
+            var reccuringJob = provider.GetRequiredService<IRecurringJobManager>();
             var emailService = provider.GetRequiredService<EmailMadRatBotService>();
 
-            backgroundJob
-                .Schedule(() => emailService.SendEmails().Wait(), emailService.Schedule);
+            RecurringJob.AddOrUpdate("service-email-common", () => emailService.SendEmailsSync(), Cron.Minutely);
         }
     }
 }

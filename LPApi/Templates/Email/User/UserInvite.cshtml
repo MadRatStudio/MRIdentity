@@ -1,0 +1,19 @@
+﻿@model CommonApi.Email.User.UserCreateTemplateModel;
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+    <div style="text-align: center;">
+        <h4 style="display: block;">Hi @Model.FirstName @Model.LastName!</h4>
+        <div>Welcome to @Model.Provider</div>
+    </div>
+    <div style="margin-top: 1rem;">
+        <div>To approve your login - click on the link below.</div>
+        <div>
+            <a href="@Model.CallbackUrl">APPROVE</a>
+        </div>
+    </div>
+</body>
+</html>

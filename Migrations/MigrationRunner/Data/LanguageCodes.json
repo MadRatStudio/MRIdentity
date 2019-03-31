@@ -1,0 +1,22 @@
+﻿[
+  {
+    "code": "en",
+    "name": "English",
+    "nativeName": "English"
+  },
+  {
+    "code": "ru",
+    "name": "Russian",
+    "nativeName": "русский язык"
+  },
+  {
+    "code": "uk",
+    "name": "Ukrainian",
+    "nativeName": "українська"
+  },
+  {
+    "code": "de",
+    "name": "German",
+    "nativeName": "Deutsch"
+  }
+]
