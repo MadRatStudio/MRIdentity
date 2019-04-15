@@ -1,31 +1,37 @@
-﻿using CommonApi.Exception.Request;
-using CommonApi.Exception.User;
-using CommonApi.Resopnse;
-using CommonApi.Response;
+﻿using Infrastructure.Entities.Enum;
 using Infrastructure.Model.User;
 using Manager;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using MRIdentityClient.Response;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace IdentityApi.Controllers
 {
     [Route("user")]
-    [Authorize]
-    public class UserController : Controller
+    [Authorize(Roles = UserRoles.ADMIN)]
+    public class UserController : BaseController
     {
         protected UserManager _userManager;
 
-        public UserController(UserManager userManager)
+        public UserController(ILoggerFactory loggerFactory, UserManager userManager) : base(loggerFactory)
         {
             _userManager = userManager;
         }
 
         #region admin
 
+        [HttpPost]
+        [Route("admin")]
+        [ProducesResponseType(200, Type = typeof(UserShortDataModel))]
+        public async Task<IActionResult> Create([FromBody] UserCreateModel model)
+        {
+            return Ok(await _userManager.AdminCreate(model));
+        }
+
         [Route("admin/list/{skip}/{limit}")]
-        [Authorize(Roles = "ADMIN")]
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(ApiListResponse<UserShortDataModel>))]
         public async Task<IActionResult> AdminList(int skip, int limit, [FromQuery] string q = null)
@@ -35,7 +41,6 @@ namespace IdentityApi.Controllers
 
         [Route("admin/roles/{id}")]
         [HttpGet]
-        [Authorize(Roles = "ADMIN")]
         [ProducesResponseType(200, Type = typeof(List<string>))]
         public async Task<IActionResult> GetRoles(string id)
         {
@@ -43,7 +48,6 @@ namespace IdentityApi.Controllers
         }
 
         [Route("admin/update/{id}")]
-        [Authorize(Roles = "ADMIN")]
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(UserDataModel))]
         public async Task<IActionResult> AdminUpdate(string id)
@@ -53,25 +57,27 @@ namespace IdentityApi.Controllers
 
         [HttpPut]
         [Route("admin/update/{id}")]
-        [Authorize(Roles = "ADMIN")]
         [ProducesResponseType(200, Type = typeof(UserCreateModel))]
         public async Task<IActionResult> AdminUpdate(string id, [FromBody] UserCreateModel model)
         {
             return Ok();
         }
 
-        [HttpPost]
-        [Route("admin")]
-        [Authorize(Roles = "ADMIN")]
-        [ProducesResponseType(200, Type = typeof(UserShortDataModel))]
-        public async Task<IActionResult> Create([FromBody] UserCreateModel model)
+        [HttpPut]
+        [Route("admin/roles/{id}")]
+        [ProducesResponseType(200, Type = typeof(OkObjectResult))]
+        public async Task<IActionResult> UserUpdateRoles(string id, [FromBody] UserRoleUpdateModel model)
         {
-            return Ok(await _userManager.AdminCreate(model));
+            if (!ModelState.IsValid)
+            {
+                return BadModelResponse();
+            }
+
+            return Ok(await _userManager.UpdateRoles(id, model));
         }
 
         [HttpDelete]
         [Route("admin/{id}")]
-        [Authorize(Roles = "ADMIN")]
         [ProducesResponseType(200, Type = typeof(OkResult))]
         public async Task<IActionResult> AdminDelete(string id)
         {

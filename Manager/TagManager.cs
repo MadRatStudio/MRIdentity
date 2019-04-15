@@ -4,15 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using CommonApi.Errors;
-using CommonApi.Models;
-using CommonApi.Resopnse;
-using CommonApi.Response;
 using Dal;
 using Infrastructure.Entities;
 using Infrastructure.Model.Provider;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using MRIdentityClient.Exception.Common;
+using MRIdentityClient.Models;
+using MRIdentityClient.Response;
 
 namespace Manager
 {
@@ -26,39 +25,26 @@ namespace Manager
             _providerTagRepository = providerTagRepository;
         }
 
-        public async Task<ApiResponse<IdNameModel>> Create(ProviderTagCreateModel model)
+        public async Task<IdNameModel> Create(ProviderTagCreateModel model)
         {
-            if (string.IsNullOrWhiteSpace(model.Key)) return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError
-            {
-                Error = "Key can not be empty",
-                Property = "Key"
-            }));
+            if (string.IsNullOrWhiteSpace(model.Key))
+                throw new ModelDamagedException("Key is null");
 
-            if (model.Translations == null || !model.Translations.Any()) return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError
-            {
-                Error = "Translations list can not be empty",
-                Property = "Translations"
-            }));
+            if (model.Translations == null || !model.Translations.Any())
+                throw new ModelDamagedException("Key is null");
 
-            if (model.Translations.Count(z => z.IsDefault) != 1) return Fail(ECollection.Select(ECollection.MODEL_DAMAGED, new ModelError
-            {
-                Error = "One translation must be default",
-                Property = "Translations"
-            }));
+            if (model.Translations.Count(z => z.IsDefault) != 1)
+                throw new ModelDamagedException("No default translation");
 
             model.Key = model.Key.ToLower();
             var exists = await _providerTagRepository.Count(x => x.Key == model.Key && x.State);
 
-            if (exists > 0) return Fail(ECollection.Select(ECollection.ENTITY_EXISTS, new ModelError
-            {
-                Error = $"Tag with key {model.Key} already exists",
-                Property = "Key"
-            }));
+            if (exists > 0)
+                throw new EntityExistsException("1", "1", typeof(ProviderTag));
 
             ProviderTag tag = new ProviderTag
             {
                 Key = model.Key,
-                //UserCreatedId = (await GetCurrentUser()).Id,
                 UserCreatedId = "TEST_USER_ID",
                 State = true,
                 Translations = model.Translations.Select(x => new ProviderTagTranslation
@@ -70,11 +56,11 @@ namespace Manager
             };
 
             await _providerTagRepository.Insert(tag);
-            return Ok(new IdNameModel
+            return new IdNameModel
             {
                 Id = tag.Id,
                 Name = tag.Translations.First(x => x.IsDefault).Name
-            });
+            };
         }
 
         public async Task<ApiListResponse<ProviderTagDisplayModel>> Get(int skip, int limit, string languageCode, string q)
@@ -94,14 +80,14 @@ namespace Manager
 
             var tags = (await _providerTagRepository.Search(skip, limit, q))?.ToList() ?? new List<Infrastructure.Entities.ProviderTag>();
 
-            foreach(var tag in tags)
+            foreach (var tag in tags)
             {
                 var name = string.Empty;
-                if(tag.Translations.Any(z => z.LanguageCode == languageCode))
+                if (tag.Translations.Any(z => z.LanguageCode == languageCode))
                 {
                     name = tag.Translations.FirstOrDefault(x => x.LanguageCode == languageCode).Name;
                 }
-                else if(tag.Translations.Any(z => z.IsDefault))
+                else if (tag.Translations.Any(z => z.IsDefault))
                 {
                     name = tag.Translations.FirstOrDefault(x => x.IsDefault).Name;
                 }

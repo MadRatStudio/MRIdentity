@@ -58,11 +58,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Connector\CommonApi\CommonApi.csproj" />
     <ProjectReference Include="..\Dal\Dal.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
     <ProjectReference Include="..\Manager\Manager.csproj" />
     <ProjectReference Include="..\Service\Service.csproj" />
+    <ProjectReference Include="..\submodules\IdentityConnector\MRIdentityClient.csproj" />
     <ProjectReference Include="..\Tools\Tools.csproj" />
   </ItemGroup>
 

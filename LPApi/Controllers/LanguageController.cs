@@ -1,10 +1,7 @@
-﻿using CommonApi.Response;
-using Infrastructure.Model.Common;
+﻿using Infrastructure.Model.Common;
 using Manager;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using MRIdentityClient.Response;
 using System.Threading.Tasks;
 
 namespace IdentityApi.Controllers

@@ -6,16 +6,6 @@ using System.Security.Claims;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AutoMapper;
-using CommonApi.Email;
-using CommonApi.Errors;
-using CommonApi.Exception.Common;
-using CommonApi.Exception.MRSystem;
-using CommonApi.Exception.Provider;
-using CommonApi.Exception.Request;
-using CommonApi.Exception.User;
-using CommonApi.Identity;
-using CommonApi.Models;
-using CommonApi.Response;
 using Dal;
 using Dal.Tasks;
 using GoogleClient;
@@ -31,6 +21,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
+using MRIdentityClient.Email;
+using MRIdentityClient.Exception.Common;
+using MRIdentityClient.Exception.MRSystem;
+using MRIdentityClient.Exception.Provider;
+using MRIdentityClient.Exception.Request;
+using MRIdentityClient.Exception.User;
+using MRIdentityClient.Models.User;
+using MRIdentityClient.Response;
 using Tools;
 using TokenOptions = Manager.Options.TokenOptions;
 
@@ -48,7 +46,7 @@ namespace Manager
 
         protected readonly Regex QMARK_REGEX = new Regex("[?]");
 
-        public LoginManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager, 
+        public LoginManager(IHttpContextAccessor httpContextAccessor, AppUserManager appUserManager,
             IMapper mapper, ILoggerFactory loggerFactory,
             AppUserRepository appUserRepository, ProviderRepository providerRepository,
             EmailSendTaskRepository emailSendTaskRepository, UrlRedirectSettings urlRedirectSettings,
@@ -99,7 +97,7 @@ namespace Manager
             var data = response.Data;
 
             var user = await _appUserManager.FindByEmailAsync(data.Email);
-            if(user == null)
+            if (user == null)
             {
                 user = new AppUser
                 {
@@ -140,7 +138,7 @@ namespace Manager
                     user.Socials = new List<UserSocial>();
 
                 var social = user.Socials.FirstOrDefault(x => x.Name == "GOOGLE");
-                if(social == null)
+                if (social == null)
                 {
                     user.Socials.Add(new UserSocial
                     {
@@ -250,7 +248,7 @@ namespace Manager
         /// <param name="context">Context</param>
         /// <param name="token">User`s short live token</param>
         /// <returns></returns>
-        public async Task<MRLoginResponseModel> ProviderApproveLogin(HttpContext context, string token, string fingerprint)
+        public async Task<ApproveLogin> ProviderApproveLogin(HttpContext context, string token, string fingerprint)
         {
             if (string.IsNullOrWhiteSpace(token))
                 throw new MRSystemException();
@@ -267,7 +265,7 @@ namespace Manager
                 throw new MRSystemException("User blocked");
 
             var targetUProvider = user.ConnectedProviders.FirstOrDefault(x => x.ProviderId == challengeResult.ProviderId);
-            if(targetUProvider == null)
+            if (targetUProvider == null)
             {
                 targetUProvider = new AppUserProvider
                 {
@@ -288,13 +286,14 @@ namespace Manager
                 await _appUserRepository.AddProviderMeta(user.Id, targetUProvider.ProviderId, _createMeta(context));
             }
 
-            var result = new MRLoginResponseModel
+            var result = new ApproveLogin
             {
-                AvatarSrc = user.Avatar?.Src,
+                AvatarUrl = user.Avatar?.Src,
                 Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 Id = user.Id,
                 Roles = targetUProvider.Roles.Select(x => x.Name).ToList(),
-                Tel = user.Tels?.FirstOrDefault()?.Number,
             };
 
             return result;
@@ -350,16 +349,16 @@ namespace Manager
                 throw new EntityNotFoundException(model.Email, typeof(AppUser));
 
             var resetPasswordEntity = await _userResetPasswordRepository.GetByUser(user.Id, model.Token);
-            if(resetPasswordEntity == null || (DateTime.UtcNow - resetPasswordEntity.CreatedTime).TotalHours > 24)
+            if (resetPasswordEntity == null || (DateTime.UtcNow - resetPasswordEntity.CreatedTime).TotalHours > 24)
                 throw new EntityNotFoundException(model.Token, typeof(UserResetPassword), "Can not find request to reset password");
 
 
-            var result =  await _appUserManager.RemovePasswordAsync(user);
+            var result = await _appUserManager.RemovePasswordAsync(user);
             if (!result.Succeeded)
                 throw new MRSystemException("Can not reset password");
 
             result = await _appUserManager.AddPasswordAsync(user, model.Password);
-            if(!result.Succeeded)
+            if (!result.Succeeded)
                 throw new MRSystemException("Can not reset password");
 
             await _userResetPasswordRepository.ResetAllCodes(user.Id);
@@ -379,7 +378,7 @@ namespace Manager
             if (userBucket == null)
                 throw new LoginFailedException(user.Email);
 
-            var roles = userBucket.Item1; 
+            var roles = userBucket.Item1;
             var identity = userBucket.Item2;
 
             var now = DateTime.UtcNow;
@@ -490,7 +489,7 @@ namespace Manager
             var encoded = new JwtSecurityTokenHandler().WriteToken(jwt);
             return encoded;
         }
-        
+
         /// <summary>
         /// Chalange short live token
         /// </summary>
@@ -502,15 +501,15 @@ namespace Manager
             var response = new ShortLiveTokenChalangeResult();
 
             var provider = await _providerRepository.GetByFingerprint(providerFingerprint);
-            if(provider == null)
+            if (provider == null)
             {
-                response.Error = ECollection.Select(ECollection.TOKEN_PROVIDER_NOT_FOUND);
+                response.Error = new ApiError(-1, "Token provider not found");
                 return response;
             }
 
             if (!provider.IsLoginEnabled)
             {
-                response.Error = ECollection.TOKEN_PROVIDER_NOT_ALLOWED;
+                response.Error = new ApiError(-1, "Token provider not allowed");
                 return response;
             }
 
@@ -550,13 +549,13 @@ namespace Manager
             catch (Exception ex)
             {
                 // TODO add logs here
-                response.Error = ECollection.TOKEN_CHALLENGE_FAILED;
+                response.Error = new ApiError(-1, "Token challenge failed");
                 return response;
             }
 
-            if(provider.Id != response.ProviderId)
+            if (provider.Id != response.ProviderId)
             {
-                response.Error = ECollection.ACCESS_DENIED;
+                response.Error = new ApiError(-1, "Access denied");
                 return response;
             }
 
@@ -577,7 +576,7 @@ namespace Manager
             var url = provider.LoginRedirectUrl;
             if (string.IsNullOrWhiteSpace(url)) return string.Empty;
 
-            url = url.Trim(new char[] { ' ', '/' , '?', '&'});
+            url = url.Trim(new char[] { ' ', '/', '?', '&' });
             url += QMARK_REGEX.IsMatch(url) ? "&" : "?";
 
             return url + ProviderOptions.LOGIN_PARAM_NAME + "=" + token;

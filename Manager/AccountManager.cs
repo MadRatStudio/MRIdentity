@@ -1,10 +1,4 @@
 ﻿using AutoMapper;
-using CommonApi.Email;
-using CommonApi.Errors;
-using CommonApi.Exception.Common;
-using CommonApi.Exception.MRSystem;
-using CommonApi.Resopnse;
-using CommonApi.Response;
 using Dal;
 using Dal.Tasks;
 using Infrastructure.Entities;
@@ -15,6 +9,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using MRDbIdentity.Domain;
+using MRIdentityClient.Exception.Basic;
+using MRIdentityClient.Exception.Common;
+using MRIdentityClient.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,16 +47,16 @@ namespace Manager
         /// Get current user display model
         /// </summary>
         /// <returns>Api respones user display model</returns>
-        public async Task<ApiResponse<UserDisplayModel>> Get()
+        public async Task<UserDisplayModel> Get()
         {
             var user = await GetCurrentUser();
             if (user == null)
-                return Fail(ECollection.NOT_AUTHORIZED);
+                throw new MRException();
 
             if (user.Status == Infrastructure.Entities.UserStatus.Blocked)
-                return Fail(ECollection.USER_BLOCKED);
+                throw new MRException();
 
-            return Ok(_mapper.Map<UserDisplayModel>(user));
+            return _mapper.Map<UserDisplayModel>(user);
         }
 
         /// <summary>
@@ -67,14 +64,14 @@ namespace Manager
         /// </summary>
         /// <param name="model"></param>
         /// <returns>ApiResponse</returns>
-        public async Task<ApiResponse> Update(UserUpdateModel model)
+        public async Task<UserDisplayModel> Update(UserUpdateModel model)
         {
             var user = await GetCurrentUser();
             if (user == null)
-                return Fail(ECollection.NOT_AUTHORIZED);
+                throw new MRException();
 
             if (user.Status == UserStatus.Blocked)
-                return Fail(ECollection.USER_BLOCKED);
+                throw new MRException(-1, "User blocked");
 
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
@@ -82,9 +79,11 @@ namespace Manager
 
             var updateResult = await _appUserRepository.Replace(user);
             if (updateResult == null)
-                return Fail(ECollection.UNDEFINED_ERROR);
+                throw new MRException();
 
-            return Ok();
+            user = await _appUserRepository.FindByIdAsync(user.Id, new System.Threading.CancellationToken());
+
+            return _mapper.Map<UserDisplayModel>(user);
         }
 
         /// <summary>
@@ -92,14 +91,14 @@ namespace Manager
         /// </summary>
         /// <param name="model">Create user tel model</param>
         /// <returns>ApiResponse</returns>
-        public async Task<ApiResponse> AddTel(CreateUserTelModel model)
+        public async Task<ApiOkResult> AddTel(CreateUserTelModel model)
         {
             var user = await GetCurrentUser();
             if (user == null)
-                return Fail(ECollection.NOT_AUTHORIZED);
+                throw new MRException();
 
             if (user.Status == UserStatus.Blocked)
-                return Fail(ECollection.USER_BLOCKED);
+                throw new MRException();
 
             if (user.Tels == null)
             {
@@ -108,7 +107,7 @@ namespace Manager
             else
             {
                 if (user.Tels.Any(x => x.Name.ToLower() == model.Name.ToLower()))
-                    return Fail(ECollection.ENTITY_EXISTS);
+                    throw new EntityExistsException("Name", model.Name, typeof(string), "Tel with this name already exists");
             }
 
             user.Tels.Add(new UserTel
@@ -120,9 +119,9 @@ namespace Manager
 
             var updateResponse = await _appUserRepository.Replace(user);
             if (updateResponse == null)
-                return Fail(ECollection.UNDEFINED_ERROR);
+                throw new MRException();
 
-            return Ok();
+            return new ApiOkResult(true);
         }
 
         /// <summary>
@@ -130,14 +129,14 @@ namespace Manager
         /// </summary>
         /// <param name="name">Name of target tel</param>
         /// <returns>Api response</returns>
-        public async Task<ApiResponse> DeleteTel(string name)
+        public async Task<ApiOkResult> DeleteTel(string name)
         {
             var user = await GetCurrentUser();
             if (user == null)
-                return Fail(ECollection.NOT_AUTHORIZED);
+                throw new MRException();
 
             if (user.Status == UserStatus.Blocked)
-                return Fail(ECollection.USER_BLOCKED);
+                throw new MRException();
 
             if (user.Tels != null && user.Tels.Any())
             {
@@ -149,7 +148,7 @@ namespace Manager
                 }
             }
 
-            return Ok();
+            return new ApiOkResult();
         }
 
         /// <summary>
@@ -157,22 +156,22 @@ namespace Manager
         /// </summary>
         /// <param name="model">Update email model</param>
         /// <returns>Api response</returns>
-        public async Task<ApiResponse> UpdateEmail(UpdateEmailModel model)
+        public async Task<ApiOkResult> UpdateEmail(UpdateEmailModel model)
         {
             var user = await GetCurrentUser();
             if (user == null)
-                return Fail(ECollection.NOT_AUTHORIZED);
+                throw new MRException();
 
             if (user.Status == UserStatus.Blocked)
-                return Fail(ECollection.USER_BLOCKED);
+                throw new MRException();
 
             user.Email = model.Email;
 
             var updateResponse = await _appUserRepository.Replace(user);
             if (updateResponse == null)
-                return Fail(ECollection.UNDEFINED_ERROR);
+                throw new MRException();
 
-            return Ok();
+            return new ApiOkResult();
         }
 
 
@@ -180,19 +179,19 @@ namespace Manager
         /// Close current user account
         /// </summary>
         /// <returns>Api response</returns>
-        public async Task<ApiResponse> CloseAccount()
+        public async Task<ApiOkResult> CloseAccount()
         {
             var user = await GetCurrentUser();
             if (user == null)
-                return Fail(ECollection.NOT_AUTHORIZED);
+                throw new MRException();
 
             if (user.Status == UserStatus.Blocked)
-                return Fail(ECollection.USER_BLOCKED);
+                throw new MRException();
 
             user.State = false;
             await _appUserRepository.RemoveSoft(user.Id);
 
-            return Ok();
+            return new ApiOkResult();
         }
     }
 }

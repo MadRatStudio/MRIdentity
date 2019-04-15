@@ -1,13 +1,9 @@
-﻿using CommonApi.Resopnse;
-using CommonApi.Response;
-using Infrastructure.Model.User;
+﻿using Infrastructure.Model.User;
 using Manager;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using MRIdentityClient.Response;
 using System.Threading.Tasks;
 
 namespace IdentityApi.Controllers
@@ -28,7 +24,7 @@ namespace IdentityApi.Controllers
         /// </summary>
         /// <returns>User display model</returns>
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(ApiResponse<UserDisplayModel>))]
+        [ProducesResponseType(200, Type = typeof(UserDisplayModel))]
         public async Task<IActionResult> Get()
         {
             return Ok(await _accountManager.Get());
@@ -40,7 +36,7 @@ namespace IdentityApi.Controllers
         /// <param name="model">Update user model</param>
         /// <returns>Ok</returns>
         [HttpPut]
-        [ProducesResponseType(200, Type = typeof(ApiResponse))]
+        [ProducesResponseType(200, Type = typeof(ApiOkResult))]
         public async Task<IActionResult> Update([FromBody] UserUpdateModel model)
         {
             if (!ModelState.IsValid)
@@ -56,7 +52,7 @@ namespace IdentityApi.Controllers
         /// <returns>Ok</returns>
         [HttpPut]
         [Route("tel")]
-        [ProducesResponseType(200, Type = typeof(ApiResponse))]
+        [ProducesResponseType(200, Type = typeof(ApiOkResult))]
         public async Task<IActionResult> AddTel([FromBody] CreateUserTelModel model)
         {
             if (!ModelState.IsValid)
@@ -72,7 +68,7 @@ namespace IdentityApi.Controllers
         /// <returns>Ok</returns>
         [HttpDelete]
         [Route("tel/{name}")]
-        [ProducesResponseType(200, Type = typeof(ApiResponse))]
+        [ProducesResponseType(200, Type = typeof(ApiOkResult))]
         public async Task<IActionResult> DeleteTel(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -88,7 +84,7 @@ namespace IdentityApi.Controllers
         /// <returns>Ok</returns>
         [HttpPut]
         [Route("email")]
-        [ProducesResponseType(200, Type = typeof(ApiResponse))]
+        [ProducesResponseType(200, Type = typeof(ApiOkResult))]
         public async Task<IActionResult> UpdateEmail([FromBody] UpdateEmailModel model)
         {
             if (!ModelState.IsValid)
@@ -104,7 +100,7 @@ namespace IdentityApi.Controllers
         /// </summary>
         /// <returns>Ok</returns>
         [HttpDelete]
-        [ProducesResponseType(200, Type = typeof(ApiResponse))]
+        [ProducesResponseType(200, Type = typeof(ApiOkResult))]
         public async Task<IActionResult> CloseAccount()
         {
             return Ok(await _accountManager.CloseAccount());

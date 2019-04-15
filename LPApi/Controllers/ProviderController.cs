@@ -1,10 +1,10 @@
-﻿using CommonApi.Models;
-using CommonApi.Response;
-using Infrastructure.Model.Provider;
+﻿using Infrastructure.Model.Provider;
 using Manager;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MRIdentityClient.Models;
+using MRIdentityClient.Response;
 using System.Threading.Tasks;
 
 namespace IdentityApi.Controllers
@@ -51,8 +51,6 @@ namespace IdentityApi.Controllers
             _logger.LogInformation("Some info");
             return Ok(await _providerManager.GetToDisplay(slug, languageCode));
         }
-
-
 
         [HttpGet]
         [Route("update/{slug}")]

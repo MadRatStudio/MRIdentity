@@ -4,9 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using CommonApi.Errors;
-using CommonApi.Resopnse;
-using CommonApi.Response;
 using Dal;
 using Dal.Tasks;
 using Infrastructure.Entities;
@@ -15,6 +12,9 @@ using Infrastructure.Model.User;
 using Infrastructure.System.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using MRIdentityClient.Exception.Basic;
+using MRIdentityClient.Exception.Common;
+using MRIdentityClient.Response;
 using Tools;
 
 namespace Manager
@@ -40,15 +40,15 @@ namespace Manager
         /// </summary>
         /// <param name="model">Provider create user model</param>
         /// <returns>UserDisplayModel</returns>
-        public async Task<ApiResponse<UserDisplayModel>> InviteUser(ProviderUserCreateModel model)
+        public async Task<UserDisplayModel> InviteUser(ProviderUserCreateModel model)
         {
             var currentUser = await GetCurrentUser();
 
             if (!await _providerRepository.ExistsWithOwner(model.ProviderId, currentUser.Id))
-                return Fail(ECollection.ACCESS_DENIED);
+                throw new AccessDeniedException(currentUser.Id, typeof(AppUser));
 
             if (model.Roles == null || !model.Roles.Any())
-                return Fail(ECollection.Select(ECollection.PROPERTY_REQUIRED, "Roles are required"));
+                throw new AccessDeniedException("", typeof(AppUser));
 
             model.Roles = model.Roles.Select(x => x.ToUpper()).ToList();
 
@@ -85,7 +85,7 @@ namespace Manager
                 var insertResult = await _appUserManager.CreateAsync(existsUser);
 
                 if (!insertResult.Succeeded)
-                    return Fail(ECollection.UNDEFINED_ERROR);
+                    throw new MRException();
 
                 await _appUserManager.AddToRoleAsync(existsUser, AppUserRoleList.USER);
 
@@ -103,12 +103,11 @@ namespace Manager
                 };
 
                 if ((await _appUserRepository.AddProvider(existsUser.Id, provider)).ModifiedCount != 1)
-                    return Fail(ECollection.UNDEFINED_ERROR);
-
+                    throw new MRException();
             }
             else
             {
-                return Fail(ECollection.USER_ALREADY_CONNECTED);
+                throw new MRException();
             }
 
             Infrastructure.Model.Template.User.ProviderInviteTemplate templateModel = new Infrastructure.Model.Template.User.ProviderInviteTemplate
@@ -122,8 +121,7 @@ namespace Manager
             var email = await _templateParser.Render("Email", "ProviderInvite", templateModel);
             await _emailSendTaskRepository.InsertEmail(existsUser.Email, "Mad Rat Studio invite", email, Infrastructure.Entities.Tasks.EmailTaskBot.MadRatBot);
 
-            var result = _mapper.Map<UserDisplayModel>(existsUser);
-            return Ok(result);
+            return _mapper.Map<UserDisplayModel>(existsUser);
         }
 
         /// <summary>
@@ -138,7 +136,7 @@ namespace Manager
             var currentUser = await GetCurrentUser();
 
             if (!await _providerRepository.ExistsWithOwner(providerId, currentUser.Id))
-                return FailList<UserDisplayModel>(ECollection.ACCESS_DENIED);
+                throw new AccessDeniedException(providerId, typeof(Provider));
 
             var connectedUsers = (await _appUserRepository.GetByProvider(skip, limit, providerId))?.ToList() ?? new List<AppUser>();
 
@@ -150,15 +148,15 @@ namespace Manager
         /// </summary>
         /// <param name="model">Provider user update model</param>
         /// <returns>Ok</returns>
-        public async Task<ApiResponse> UpdateUserRoles(ProviderUserUpdateModel model)
+        public async Task<ApiOkResult> UpdateUserRoles(ProviderUserUpdateModel model)
         {
             var currentUser = await GetCurrentUser();
 
             if (!await _providerRepository.ExistsWithOwner(model.ProviderId, currentUser.Id))
-                return Fail(ECollection.ACCESS_DENIED);
+                throw new AccessDeniedException(model.ProviderId, typeof(Provider));
 
             if (model.Roles == null || !model.Roles.Any())
-                return Fail(ECollection.Select(ECollection.PROPERTY_REQUIRED, "Roles are required"));
+                throw new ModelDamagedException("Roles are required");
 
             model.Roles = model.Roles.Select(x => x.ToUpper()).ToList();
 
@@ -169,15 +167,15 @@ namespace Manager
 
             var targetUser = await _appUserRepository.FindByEmailAsync(model.UserId, new System.Threading.CancellationToken());
             if (targetUser == null)
-                return Fail(ECollection.USER_NOT_FOUND);
+                throw new EntityNotFoundException(model.UserId, typeof(AppUser));
 
             if (!(targetUser.ConnectedProviders?.Any(x => x.ProviderId == model.ProviderId) ?? false))
-                return Fail(ECollection.PROVIDER_NOT_FOUND);
+                throw new EntityNotFoundException(model.ProviderId, typeof(Provider));
 
 
             await _appUserRepository.UpdateProviderRoles(targetUser.Id, model.ProviderId, rolesToUse);
 
-            return Ok();
+            return new ApiOkResult();
         }
     }
 }

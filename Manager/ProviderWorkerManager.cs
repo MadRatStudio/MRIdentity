@@ -4,14 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using CommonApi.Errors;
-using CommonApi.Resopnse;
 using Dal;
 using Infrastructure.Entities;
 using Infrastructure.Model.Provider;
 using Infrastructure.System.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using MRIdentityClient.Exception.Basic;
+using MRIdentityClient.Exception.Common;
+using MRIdentityClient.Response;
 using Tools;
 
 namespace Manager
@@ -30,10 +31,10 @@ namespace Manager
             _userInviteRepository = userInviteRepository;
         }
 
-        public async Task<ApiResponse<ProviderWorkerDisplayModel>> CreateBySlug(string slug, ProviderWorkerCreateModel model)
+        public async Task<ProviderWorkerDisplayModel> CreateBySlug(string slug, ProviderWorkerCreateModel model)
         {
             if (!await _providerRepository.IsWorkerInRoleBySlug(slug, _currentUserId, ProviderWorkerRole.USER_MANAGER))
-                return Fail(ECollection.ACCESS_DENIED);
+                throw new AccessDeniedException(slug, typeof(ProviderWorker));
 
             model.Email = model.Email.ToLower();
 
@@ -81,7 +82,7 @@ namespace Manager
             else
             {
                 if (await _providerRepository.IsWorkerExistsBySlug(slug, existsUser.Id))
-                    return Fail(ECollection.USER_ALREADY_CONNECTED);
+                    throw new EntityExistsException("Id", existsUser.Id, typeof(AppUser));
 
                 if (!await _appUserManager.IsInRoleAsync(existsUser, AppUserRoleList.MANAGER))
                     await _appUserManager.AddToRoleAsync(existsUser, AppUserRoleList.MANAGER);
@@ -101,17 +102,17 @@ namespace Manager
 
             _logger.LogInformation("Added new worker {0} to provider {1} by user {2}", worker.UserEmail, slug, _currentUserEmail);
 
-            return Ok(_mapper.Map<ProviderWorkerDisplayModel>(worker).ApplyUser(existsUser));
+            return _mapper.Map<ProviderWorkerDisplayModel>(worker).ApplyUser(existsUser);
         }
 
-        public async Task<ApiResponse<List<ProviderWorkerDisplayModel>>> GetBySlug(string slug)
+        public async Task<ApiListResponse<ProviderWorkerDisplayModel>> GetBySlug(string slug)
         {
             if (!await _providerRepository.IsWorkerExistsBySlug(slug, _currentUserId))
-                return Fail(ECollection.ACCESS_DENIED);
+                throw new AccessDeniedException(slug, typeof(ProviderWorker));
 
             var entities = await _providerRepository.GetWorkersBySlug(slug);
             if (entities == null || !entities.Any())
-                return Ok(new List<ProviderWorkerDisplayModel>());
+                return new ApiListResponse<ProviderWorkerDisplayModel>(0, 0);
 
             var models = entities.Select(x => _mapper.Map<ProviderWorkerDisplayModel>(x)).ToList();
             var users = await _appUserRepository.GetShortById(entities.Select(x => x.UserId));
@@ -121,21 +122,21 @@ namespace Manager
                 model.ApplyUser(users.FirstOrDefault(x => x.Id == model.UserId));
             }
 
-            return Ok(models);
+            return new ApiListResponse<ProviderWorkerDisplayModel>(models, 0, 0, models.Count);
         }
 
-        public async Task<ApiResponse<ProviderWorkerDisplayModel>> UpdateBySlug(string slug, ProviderWorkerUpdateModel model)
+        public async Task<ProviderWorkerDisplayModel> UpdateBySlug(string slug, ProviderWorkerUpdateModel model)
         {
             if (!await _providerRepository.IsWorkerInRoleBySlug(slug, _currentUserId, ProviderWorkerRole.USER_MANAGER))
-                return Fail(ECollection.ACCESS_DENIED);
+                throw new AccessDeniedException("", typeof(AppUser));
 
             var shortUser = await _appUserRepository.GetShortById(model.UserId);
 
             if (shortUser == null)
-                return Fail(ECollection.USER_NOT_FOUND);
+                throw new EntityNotFoundException(model.UserId, typeof(AppUser));
 
             if (shortUser.Status == UserStatus.Blocked)
-                return Fail(ECollection.USER_BLOCKED);
+                throw new MRException(-1, "User is blocked");
 
             ProviderWorker entity = _mapper.Map<ProviderWorker>(model);
             entity.UserEmail = shortUser.Email;
@@ -150,36 +151,36 @@ namespace Manager
                 await _appUserManager.AddToRoleAsync(shortUser, AppUserRoleList.MANAGER);
             }
 
-            return Ok(_mapper.Map<ProviderWorkerDisplayModel>(entity).ApplyUser(shortUser));
+            return _mapper.Map<ProviderWorkerDisplayModel>(entity).ApplyUser(shortUser);
         }
 
-        public async Task<ApiResponse> Delete(string slug, string userId)
+        public async Task<ApiOkResult> Delete(string slug, string userId)
         {
             if (!await _providerRepository.IsWorkerInRoleBySlug(slug, _currentUserId, ProviderWorkerRole.USER_MANAGER))
-                return Fail(ECollection.ACCESS_DENIED);
+                throw new AccessDeniedException(userId, typeof(AppUser));
 
             if (await _providerRepository.IsWorkerInRoleBySlug(slug, userId, ProviderWorkerRole.OWNER))
-                return Fail(ECollection.Select(ECollection.UNDEFINED_ERROR, new ModelError("User", "Can not delete owner")));
+                throw new MRException();
 
             var allWorkers = await _providerRepository.GetWorkersBySlug(slug);
             if (allWorkers.Count == 1)
-                return Fail(ECollection.Select(ECollection.UNDEFINED_ERROR, new ModelError("User", "Can not delete last user")));
+                throw new MRException();
 
             var removeResult = await _providerRepository.RemoveWorkerBySlug(slug, userId);
             if (!removeResult)
             {
                 _logger.LogError("Can not delete user {0} from provider {1}", userId, slug);
-                return Fail(ECollection.UNDEFINED_ERROR);
+                throw new MRException();
             }
 
             var userWorkersCount = await _providerRepository.UserInWorkersCount(userId);
-            if(userWorkersCount == 0)
+            if (userWorkersCount == 0)
             {
                 var user = await _appUserRepository.GetShortById(userId);
                 await _appUserManager.RemoveFromRoleAsync(user, AppUserRoleList.MANAGER);
             }
 
-            return Ok();
+            return new ApiOkResult();
         }
     }
 }

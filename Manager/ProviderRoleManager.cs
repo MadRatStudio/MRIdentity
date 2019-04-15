@@ -4,15 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using CommonApi.Errors;
-using CommonApi.Models;
-using CommonApi.Resopnse;
-using CommonApi.Response;
 using Dal;
 using Infrastructure.Entities;
 using Infrastructure.Model.Provider;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using MRIdentityClient.Exception.Basic;
+using MRIdentityClient.Exception.Common;
+using MRIdentityClient.Response;
 
 namespace Manager
 {
@@ -29,62 +28,56 @@ namespace Manager
             _providerRepository = providerRepository;
         }
 
-        public async Task<ApiResponse<List<ProviderRoleDisplayModel>>> GetProviderRoles(string slug)
+        public async Task<ApiListResponse<ProviderRoleDisplayModel>> GetProviderRoles(string slug)
         {
             if (string.IsNullOrWhiteSpace(slug))
-            {
-                return Fail(ECollection.Select(ECollection.PROPERTY_REQUIRED, new ModelError("slug", "Property slug is required")));
-            }
+                throw new ModelDamagedException("slug is null");
 
             slug = slug.ToLower();
 
             if (!await _providerRepository.ExistsWithOwnerSlug(slug, (await GetCurrentUser())?.Id))
-                return Fail(ECollection.ACCESS_DENIED);
+                throw new AccessDeniedException(slug, typeof(Provider));
 
             var result = (await _providerRepository.GetRolesBySlug(slug))?.Select(x => _mapper.Map<ProviderRoleDisplayModel>(x)).ToList() ?? new List<ProviderRoleDisplayModel>();
 
-            return Ok(result);
+            return new ApiListResponse<ProviderRoleDisplayModel>(result, 0, 0, result.Count);
         }
 
-        public async Task<ApiResponse<ProviderRoleDisplayModel>> CreateProviderRole(string slug, ProviderRoleCreateModel model)
+        public async Task<ProviderRoleDisplayModel> CreateProviderRole(string slug, ProviderRoleCreateModel model)
         {
             if (string.IsNullOrWhiteSpace(slug))
-            {
-                return Fail(ECollection.Select(ECollection.PROPERTY_REQUIRED, new ModelError("slug", "Property slug is required")));
-            }
+                throw new ModelDamagedException("Slug is required");
 
             slug = slug.ToLower();
 
             if (!await _providerRepository.ExistsWithOwnerSlug(slug, (await GetCurrentUser())?.Id))
-                return Fail(ECollection.ACCESS_DENIED);
+                throw new AccessDeniedException(slug, typeof(Provider));
 
             model.Name = model.Name.ToUpper();
             var entity = _mapper.Map<ProviderRole>(model);
 
             if (!await _providerRepository.InsertRoleBySlug(slug, entity))
-                return Fail(ECollection.UNDEFINED_ERROR);
+                throw new MRException();
 
-            return Ok(_mapper.Map<ProviderRoleDisplayModel>(entity));
+            return _mapper.Map<ProviderRoleDisplayModel>(entity);
         }
 
-        public async Task<ApiResponse> RemoveProviderRole(string slug, string name)
+        public async Task<ApiOkResult> RemoveProviderRole(string slug, string name)
         {
             if (string.IsNullOrWhiteSpace(slug))
-            {
-                return Fail(ECollection.Select(ECollection.PROPERTY_REQUIRED, new ModelError("slug", "Property slug is required")));
-            }
+                throw new ModelDamagedException("Slug is required");
 
             slug = slug.ToLower();
 
             if (!await _providerRepository.ExistsWithOwnerSlug(slug, (await GetCurrentUser())?.Id))
-                return Fail(ECollection.ACCESS_DENIED);
+                throw new AccessDeniedException(slug, typeof(Provider));
 
             name = name.ToUpper();
 
             if (!await _providerRepository.RemoveRoleBySlug(slug, name))
-                return Fail(ECollection.UNDEFINED_ERROR);
+                throw new MRException();
 
-            return Ok();
+            return new ApiOkResult();
         }
 
     }

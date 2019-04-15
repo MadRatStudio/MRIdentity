@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CommonApi.Resopnse;
+﻿using System.Threading.Tasks;
 using Infrastructure.Model.Provider;
 using Infrastructure.Model.User;
 using Manager;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MRIdentityClient.Response;
 
 namespace IdentityApi.Controllers
 {
@@ -32,7 +29,7 @@ namespace IdentityApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        [ProducesResponseType(200, Type = typeof(ApiResponse<UserDisplayModel>))]
+        [ProducesResponseType(200, Type = typeof(UserDisplayModel))]
         public async Task<IActionResult> Create([FromBody]ProviderUserCreateModel model)
         {
             if (!ModelState.IsValid)
@@ -47,7 +44,7 @@ namespace IdentityApi.Controllers
         /// <param name="model">User update model</param>
         /// <returns>Ok result</returns>
         [HttpPut]
-        [ProducesResponseType(200, Type = typeof(ApiResponse))]
+        [ProducesResponseType(200, Type = typeof(ApiOkResult))]
         public async Task<IActionResult> Update([FromBody] ProviderUserUpdateModel model)
         {
             if (!ModelState.IsValid)

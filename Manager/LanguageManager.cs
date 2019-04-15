@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using CommonApi.Response;
 using Dal;
-using Infrastructure.Entities;
 using Infrastructure.Model.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using MRDbIdentity.Infrastructure.Interface;
+using MRIdentityClient.Response;
 
 namespace Manager
 {

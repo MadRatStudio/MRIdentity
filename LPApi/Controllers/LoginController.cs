@@ -1,12 +1,13 @@
-﻿using CommonApi.Exception.Request;
-using CommonApi.Exception.User;
-using CommonApi.Response;
-using Infrastructure.Model.Provider;
+﻿using Infrastructure.Model.Provider;
 using Infrastructure.Model.User;
 using Manager;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MRIdentityClient.Exception.Request;
+using MRIdentityClient.Exception.User;
+using MRIdentityClient.Models.User;
+using MRIdentityClient.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -94,6 +95,8 @@ namespace IdentityApi.Controllers
 
         [HttpPut]
         [Route("provider/approve")]
+        [AllowAnonymous]
+        [ProducesResponseType(200, Type = typeof(ApproveLogin))]
         public async Task<IActionResult> LoginApprove([FromQuery] string token, [FromQuery] string fingerprint)
         {
             return Ok(await _loginManager.ProviderApproveLogin(HttpContext, token, fingerprint));

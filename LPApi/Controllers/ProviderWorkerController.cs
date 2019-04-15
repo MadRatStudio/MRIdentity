@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CommonApi.Resopnse;
 using Infrastructure.Model.Provider;
 using Infrastructure.Model.User;
 using Infrastructure.System.Options;
@@ -10,6 +9,7 @@ using Manager;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MRIdentityClient.Response;
 
 namespace IdentityApi.Controllers
 {
@@ -35,7 +35,7 @@ namespace IdentityApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("{slug}")]
-        [ProducesResponseType(200, Type = typeof(ApiResponse<ProviderWorkerDisplayModel>))]
+        [ProducesResponseType(200, Type = typeof(ProviderWorkerDisplayModel))]
         public async Task<IActionResult> Create(string slug, [FromBody] ProviderWorkerCreateModel model)
         {
             if (!ModelState.IsValid)
@@ -51,7 +51,7 @@ namespace IdentityApi.Controllers
         /// <returns>List of workers</returns>
         [Route("{slug}")]
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(ApiResponse<List<ProviderWorkerDisplayModel>>))]
+        [ProducesResponseType(200, Type = typeof(ApiListResponse<ProviderWorkerDisplayModel>))]
         public async Task<IActionResult> Get(string slug)
         {
             if (string.IsNullOrWhiteSpace(slug))
@@ -68,7 +68,7 @@ namespace IdentityApi.Controllers
         /// <returns></returns>
         [Route("{slug}")]
         [HttpPut]
-        [ProducesResponseType(200, Type = typeof(ApiResponse<ProviderWorkerDisplayModel>))]
+        [ProducesResponseType(200, Type = typeof(ProviderWorkerDisplayModel))]
         public async Task<IActionResult> Update(string slug, [FromBody] ProviderWorkerUpdateModel model)
         {
             if (!ModelState.IsValid)
@@ -85,7 +85,7 @@ namespace IdentityApi.Controllers
         /// <returns>Ok</returns>
         [Route("{slug}/{userId}")]
         [HttpDelete]
-        [ProducesResponseType(200, Type = typeof(ApiResponse))]
+        [ProducesResponseType(200, Type = typeof(ApiOkResult))]
         public async Task<IActionResult> Delete(string slug, string userId)
         {
             return Ok(await _providerWorkerManager.Delete(slug, userId));

@@ -1,8 +1,4 @@
 ﻿using AutoMapper;
-using CommonApi.Errors;
-using CommonApi.Exception.Common;
-using CommonApi.Exception.MRSystem;
-using CommonApi.Resopnse;
 using ConnectorS3;
 using ConnectorS3.Domain.Image;
 using ConnectorS3.Domain.Upload;
@@ -10,10 +6,10 @@ using Dal;
 using Infrastructure.Model.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using MRIdentityClient.Exception.Common;
+using MRIdentityClient.Exception.MRSystem;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Manager

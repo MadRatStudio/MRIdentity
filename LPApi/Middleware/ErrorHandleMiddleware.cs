@@ -1,10 +1,7 @@
-﻿using CommonApi.Errors;
-using CommonApi.Exception.Basic;
-using CommonApi.Exception.MRSystem;
-using CommonApi.Exception.Request;
-using CommonApi.Resopnse;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using MRIdentityClient.Exception.Basic;
+using MRIdentityClient.Exception.MRSystem;
 using Newtonsoft.Json;
 using System;
 using System.Net;

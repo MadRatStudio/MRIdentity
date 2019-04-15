@@ -1,10 +1,9 @@
-﻿using CommonApi.Resopnse;
-using CommonApi.Response;
-using Infrastructure.Model.Provider;
+﻿using Infrastructure.Model.Provider;
 using Manager;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MRIdentityClient.Response;
 using System.Threading.Tasks;
 
 namespace IdentityApi.Controllers

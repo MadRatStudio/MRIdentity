@@ -6,14 +6,6 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using CommonApi.Errors;
-using CommonApi.Exception.Basic;
-using CommonApi.Exception.Common;
-using CommonApi.Exception.MRSystem;
-using CommonApi.Exception.Request;
-using CommonApi.Models;
-using CommonApi.Resopnse;
-using CommonApi.Response;
 using Dal;
 using Infrastructure.Entities;
 using Infrastructure.Model.Provider;
@@ -21,6 +13,11 @@ using Manager.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using MRIdentityClient.Exception.Common;
+using MRIdentityClient.Exception.MRSystem;
+using MRIdentityClient.Exception.Request;
+using MRIdentityClient.Models;
+using MRIdentityClient.Response;
 using Tools;
 
 namespace Manager
@@ -359,7 +356,7 @@ namespace Manager
                 throw new EntityNotFoundException(slug, typeof(Provider));
 
             var user = await GetCurrentUser();
-            if (entity.Owner.Id != user.Id)
+            if (entity.Owner.Id != user.Id && !_currentUserIsAdmin)
                 throw new AccessDeniedException(slug, typeof(Provider));
 
             var model = _mapper.Map<ProviderUpdateModel>(entity);

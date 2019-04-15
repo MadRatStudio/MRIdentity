@@ -1,5 +1,4 @@
-﻿using CommonApi.Resopnse;
-using Infrastructure.Model.Common;
+﻿using Infrastructure.Model.Common;
 using Manager;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

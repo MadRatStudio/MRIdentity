@@ -4,16 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using CommonApi.Errors;
-using CommonApi.Exception.Common;
-using CommonApi.Models;
-using CommonApi.Resopnse;
-using CommonApi.Response;
 using Dal;
 using Infrastructure.Entities;
 using Infrastructure.Model.Provider;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using MRIdentityClient.Exception.Common;
+using MRIdentityClient.Models;
+using MRIdentityClient.Response;
 
 namespace Manager
 {

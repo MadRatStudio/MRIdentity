@@ -11,14 +11,14 @@ using MRDbIdentity.Domain;
 using System.Threading.Tasks;
 using Infrastructure.Entities;
 using AutoMapper;
-using CommonApi.Manager;
 using Manager.Options;
 using Microsoft.Extensions.Logging;
+using Infrastructure.Entities.Enum;
 
 namespace Manager
 {
 
-    public class BaseManager : ApiResponseManager
+    public class BaseManager
     {
         protected readonly AppUserManager _appUserManager;
         protected readonly IHttpContextAccessor _httpContextAccessor;
@@ -28,6 +28,8 @@ namespace Manager
         protected string _currentUserEmail => _httpContextAccessor.HttpContext.User?.FindFirst(ClaimsIdentity.DefaultNameClaimType)?.Value;
         protected string _currentUserId => _httpContextAccessor.HttpContext.User?.FindFirst(TokenOptions.USER_ID)?.Value;
         protected List<string> _currentUserRoles => _httpContextAccessor.HttpContext.User?.FindAll(ClaimsIdentity.DefaultRoleClaimType)?.Select(x => x.Value).ToList() ?? new List<string>();
+
+        protected bool _currentUserIsAdmin => _currentUserRoles?.Contains(UserRoles.ADMIN) ?? false;
 
         protected AppUser _currentUser { get; set; }
         protected async Task<AppUser> GetCurrentUser()

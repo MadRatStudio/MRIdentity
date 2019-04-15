@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CommonApi.Resopnse;
 using Infrastructure.Model.Provider;
 using Manager;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MRIdentityClient.Response;
 
 namespace IdentityApi.Controllers
 {
@@ -29,7 +29,7 @@ namespace IdentityApi.Controllers
         /// <returns>List provider role display model</returns>
         [HttpGet]
         [Route("list/{slug}")]
-        [ProducesResponseType(200, Type = typeof(ApiResponse<List<ProviderRoleDisplayModel>>))]
+        [ProducesResponseType(200, Type = typeof(ApiListResponse<ProviderRoleDisplayModel>))]
         public async Task<IActionResult> Get(string slug)
         {
             return Ok(await _providerRoleManager.GetProviderRoles(slug));
@@ -43,7 +43,7 @@ namespace IdentityApi.Controllers
         /// <returns>Role display model</returns>
         [HttpPut]
         [Route("{slug}")]
-        [ProducesResponseType(200, Type = typeof(ApiResponse<ProviderRoleDisplayModel>))]
+        [ProducesResponseType(200, Type = typeof(ProviderRoleDisplayModel))]
         public async Task<IActionResult> Create(string slug, [FromBody] ProviderRoleCreateModel model)
         {
             if (!ModelState.IsValid)
@@ -60,7 +60,7 @@ namespace IdentityApi.Controllers
         /// <returns></returns>
         [HttpDelete]
         [Route("{slug}/{name}")]
-        [ProducesResponseType(200, Type = typeof(ApiResponse))]
+        [ProducesResponseType(200, Type = typeof(ApiOkResult))]
         public async Task<IActionResult> Delete(string slug, string name)
         {
             return Ok(await _providerRoleManager.RemoveProviderRole(slug, name));
