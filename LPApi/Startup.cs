@@ -1,6 +1,4 @@
-﻿using Dal;
-using Manager;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -8,22 +6,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using MRDbIdentity.Domain;
-using MRDbIdentity.Infrastructure.Interface;
-using MRDbIdentity.Service;
 using Microsoft.IdentityModel.Tokens;
 using Manager.Options;
-using Microsoft.AspNetCore.Http;
-using Infrastructure.Entities;
-using AutoMapper.Execution;
 using AutoMapper;
 using IdentityApi.Init;
 using Newtonsoft.Json.Serialization;
-using Infrastructure.System.Provider;
 using System.Reflection;
 using System.IO;
 using System;
 using Hangfire;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -105,7 +96,6 @@ namespace IdentityApi
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials()));
             services.AddMvc(o =>
             {
-                o.ModelMetadataDetailsProviders.Add(new ModelRequiredProvider());
             }).AddJsonOptions(options =>
             {
                 options.SerializerSettings.DateFormatString = "yyyy-MM-ddTH:mm:ss.Z";
